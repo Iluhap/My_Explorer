@@ -2,12 +2,13 @@
 #include "windows.h"
 #include <vector>
 #include <string>
-#include <filesystem>
 
 
 namespace FileSystem
 {
-
+	/*
+	*	Class used for getting info about files in directories 
+	*/
 	class File
 	{
 	public:
@@ -23,6 +24,10 @@ namespace FileSystem
 		File(const WIN32_FIND_DATA& data);
 	};
 
+	
+	/*
+	*	Class used for interaction with drive's directories 
+	*/
 	class Directory
 	{
 	private:
@@ -36,8 +41,6 @@ namespace FileSystem
 
 	private:
 		Directory() {}
-
-		void find_dirs();
 
 		void find_files();
 
@@ -59,6 +62,10 @@ namespace FileSystem
 		// End of getters declaration
 	};
 
+
+	/*
+	* Namespace with helpers methods
+	*/
 	namespace Utilities
 	{
 		std::vector<std::string> listDrives(); // Returns a list of logical drives on current machine

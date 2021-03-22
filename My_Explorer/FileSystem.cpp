@@ -6,17 +6,15 @@ namespace FileSystem
 
 	inline Directory::Directory(std::string name, Directory* parent) : name(name), parent(parent)
 	{
-		find_dirs();
-
 		find_files();
 	}
 
 	inline void Directory::Update()
 	{
-		this->find_dirs();
 		this->find_files();
 	}
-
+	
+	/*
 	inline void Directory::find_dirs()
 	{
 		std::string path = this->getPath();
@@ -33,7 +31,8 @@ namespace FileSystem
 			} while (FindNextFile(hFind, &data));
 			FindClose(hFind);
 		}
-	}
+	}*/
+
 	inline void Directory::find_files()
 	{
 		std::string path = this->getPath();
@@ -44,12 +43,11 @@ namespace FileSystem
 		if (hFind != INVALID_HANDLE_VALUE) {
 			do
 			{
-
-				if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-				{
-					File file(data);
-					this->files.push_back(file); // filling list of files
-				}
+				if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+					this->subDirectories.push_back(data.cFileName); // filling list of subDirectories
+				else 
+					this->files.push_back(File(data)); // filling list of files
+				
 			} while (FindNextFile(hFind, &data));
 			FindClose(hFind);
 		}
@@ -89,31 +87,6 @@ namespace FileSystem
 
 	//---------END OF METHODS---------//
 
-
-	// Implemention of utilities methods
-	inline std::vector<std::string> Utilities::listDrives()
-	{
-		char buffer[128];
-
-		GetLogicalDriveStrings(128, buffer);
-
-		std::vector<std::string> drives;
-
-		std::string acum;
-
-		for (size_t i = 0; i < 40; i++)
-		{
-			if (buffer[i] == '\0' or buffer[i] == '\\')
-			{
-				drives.push_back(acum);
-				acum = "";
-			}
-			else
-				acum += buffer[i];
-		}
-		return drives;
-	}
-
 	inline File::File(const WIN32_FIND_DATA& data)
 	{
 		{
@@ -130,8 +103,35 @@ namespace FileSystem
 			if (idx != std::string::npos)
 				this->extension = name.substr(idx + 1);
 			else
-				this->extension = "NO_EXTENSION";
+				this->extension = "\0";
 			// ------------------------------- //
+		}
+	}
+
+	namespace Utilities
+	{
+		// Implemention of utilities methods
+		inline std::vector<std::string> Utilities::listDrives()
+		{
+			char buffer[128];
+
+			GetLogicalDriveStrings(128, buffer);
+
+			std::vector<std::string> drives;
+
+			std::string acum;
+
+			for (size_t i = 0; i < 40; i++)
+			{
+				if (buffer[i] == '\0' or buffer[i] == '\\')
+				{
+					drives.push_back(acum);
+					acum = "";
+				}
+				else
+					acum += buffer[i];
+			}
+			return drives;
 		}
 	}
 }
