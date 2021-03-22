@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
