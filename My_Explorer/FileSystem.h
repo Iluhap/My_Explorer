@@ -40,11 +40,13 @@ namespace FileSystem
 		std::vector<File> files; // list of files of current directory
 
 	private:
-		Directory() {}
+
+		Directory();
 
 		void find_files();
 
 	public:
+
 		Directory(std::string name, Directory* parent);
 
 		void Update();
@@ -69,5 +71,7 @@ namespace FileSystem
 	namespace Utilities
 	{
 		std::vector<std::string> listDrives(); // Returns a list of logical drives on current machine
+
+		void clientRectToFolderRect(RECT &cRect);
 	}
 }

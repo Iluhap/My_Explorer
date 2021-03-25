@@ -2,7 +2,7 @@
 
 namespace FileSystem
 {
-	//---------IMPLEMENTETION OF DIRECTORY METHODS---------//
+	//---------IMPLEMENTETION OF DIRECTORY'S METHODS---------//
 
 	inline Directory::Directory(std::string name, Directory* parent) : name(name), parent(parent)
 	{
@@ -13,25 +13,6 @@ namespace FileSystem
 	{
 		this->find_files();
 	}
-	
-	/*
-	inline void Directory::find_dirs()
-	{
-		std::string path = this->getPath();
-
-		WIN32_FIND_DATA data;
-		HANDLE hFind = FindFirstFile((path + "\\*").c_str(), &data);      // DIRECTORY
-
-		if (hFind != INVALID_HANDLE_VALUE) {
-			do
-			{
-				if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-					this->subDirectories.push_back(data.cFileName); // filling list of subDirectories
-
-			} while (FindNextFile(hFind, &data));
-			FindClose(hFind);
-		}
-	}*/
 
 	inline void Directory::find_files()
 	{
@@ -84,29 +65,31 @@ namespace FileSystem
 		else
 			return parent->getPath() + "\\" + this->name;
 	}
+	//---------END OF METHODS---------//
+
+
+	//---------IMPLEMENTETION OF FILE'S METHODS---------//
+	inline File::File(const WIN32_FIND_DATA& data)
+	{
+		this->name = data.cFileName; // Saving name of file
+
+		FileTimeToSystemTime(&data.ftLastWriteTime, &this->time); // Saving time
+
+		// -----Saving file extension----- //
+
+		std::string::size_type idx;
+
+		idx = name.rfind('.');
+
+		if (idx != std::string::npos)
+			this->extension = name.substr(idx + 1);
+		else
+			this->extension = "\0";
+		// ------------------------------- //
+	}
 
 	//---------END OF METHODS---------//
 
-	inline File::File(const WIN32_FIND_DATA& data)
-	{
-		{
-			this->name = data.cFileName; // Saving name of file
-
-			FileTimeToSystemTime(&data.ftLastWriteTime, &this->time); // Saving time
-
-			// -----Saving file extension----- //
-
-			std::string::size_type idx;
-
-			idx = name.rfind('.');
-
-			if (idx != std::string::npos)
-				this->extension = name.substr(idx + 1);
-			else
-				this->extension = "\0";
-			// ------------------------------- //
-		}
-	}
 
 	namespace Utilities
 	{
@@ -132,6 +115,14 @@ namespace FileSystem
 					acum += buffer[i];
 			}
 			return drives;
+		}
+
+		inline void clientRectToFolderRect(RECT& cRect)
+		{
+			double l_offset = 0.3; 
+
+			cRect = {(LONG)(cRect.right * l_offset), cRect.top, cRect.right, cRect.bottom};
+
 		}
 	}
 }
