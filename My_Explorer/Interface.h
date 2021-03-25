@@ -2,21 +2,32 @@
 
 #include "FileSystem.cpp"
 
+using namespace FileSystem;
 
-// TODO Разработать концепцию класса текущей директории
 class Folder
 {
 private:
-	FileSystem::Directory currDir;
+	Directory *currDir = nullptr;
+
+	HWND hListBox = nullptr;
 
 	RECT area;
 
+	Folder();
+
 public:
-	Folder(const FileSystem::Directory &dir, const RECT& area);
+
+	Folder(Directory* dir, RECT& rt);
+
+	void create(HWND hWmd, HINSTANCE hInst);
+
+	void setRect(const RECT& rect);
+
+	void setDir(Directory& directory);
 
 	void updateDir();
 
-	void updateArea();
+	void updateList();
 };
 
 class FolderTree;
