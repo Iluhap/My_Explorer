@@ -64,13 +64,24 @@ namespace FileSystem
 		// End of getters declaration
 	};
 
-
 	/*
 	* Namespace with helpers methods
 	*/
 	namespace Utilities
 	{
 		std::vector<std::string> listDrives(); // Returns a list of logical drives on current machine
+
+		void Copy(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName);
+
+		void deleteFile(LPCSTR lpFileName);
+
+		void DeleteDirectory(LPCSTR lpPathName);
+
+		void ChangeName(); // TODO implement changing name of file
+
+		void CopyDirectory(); // TODO
+
+		void MoveDirectory(); // TODO
 
 		void clientRectToFolderRect(RECT &cRect);
 	}

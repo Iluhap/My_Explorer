@@ -49,12 +49,6 @@ namespace FileSystem
 					return false;
 			}
 		);
-
-		/*if (file == this->files.end())
-		{
-
-		}*/
-
 		return *file;
 	}
 
@@ -115,6 +109,34 @@ namespace FileSystem
 					acum += buffer[i];
 			}
 			return drives;
+		}
+
+
+		// TODO find the way to notufy user about ERRORS acquired
+		inline void Copy(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)
+		{
+			BOOL status = TRUE;
+
+			if (!CopyFile(lpExistingFileName, lpNewFileName, status))
+			{
+				// ERROR message
+			}
+
+
+		}
+		inline void deleteFile(LPCSTR lpFileName)
+		{
+			if (!DeleteFile(lpFileName))
+			{
+				// ERROR message
+			}
+		}
+		inline void DeleteDirectory(LPCSTR lpPathName)
+		{
+			if (!RemoveDirectory(lpPathName))
+			{
+				// ERROR message
+			}
 		}
 
 		inline void clientRectToFolderRect(RECT& cRect)
