@@ -75,9 +75,9 @@ namespace FileSystem
 
 		void deleteFile(LPCSTR lpFileName);
 
-		void DeleteDirectory(LPCSTR lpPathName);
+		void DeleteDirectory(Directory* pDir); 
 
-		void ChangeName(); // TODO implement changing name of file
+		void ChangeName(LPCSTR lpFileName, LPCSTR lpNewFileName); // TODO implement changing name of file
 
 		void CopyDirectory(); // TODO
 

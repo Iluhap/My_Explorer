@@ -26,9 +26,9 @@ namespace FileSystem
 			{
 				if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 					this->subDirectories.push_back(data.cFileName); // filling list of subDirectories
-				else 
+				else
 					this->files.push_back(File(data)); // filling list of files
-				
+
 			} while (FindNextFile(hFind, &data));
 			FindClose(hFind);
 		}
@@ -42,12 +42,12 @@ namespace FileSystem
 	{
 		auto file = std::find_if(this->files.begin(), this->files.end(),
 			[filename](const File& elem)
-			{
-				if (elem.name == filename)
-					return true;
-				else
-					return false;
-			}
+		{
+			if (elem.name == filename)
+				return true;
+			else
+				return false;
+		}
 		);
 		return *file;
 	}
@@ -131,19 +131,48 @@ namespace FileSystem
 				// ERROR message
 			}
 		}
-		inline void DeleteDirectory(LPCSTR lpPathName)
+		
+		// TODO add comments 
+		inline void DeleteDirectory(Directory* pDir)
 		{
-			if (!RemoveDirectory(lpPathName))
+			for (File file : pDir->getFiles())
 			{
-				// ERROR message
+				std::string filename = (pDir->getPath() + '\\' + file.name).c_str();
+
+				deleteFile(filename.c_str());
 			}
+
+			std::vector<std::string> subDirs = pDir->getDirs();
+
+			for (std::string dir : subDirs)
+			{
+
+				if (!(dir == "." or dir == ".."))
+				{
+					Directory sub_dir(dir, pDir);
+
+					DeleteDirectory(&sub_dir);
+				}
+				
+			}
+
+			if (RemoveDirectory(pDir->getPath().c_str()))
+			{
+				// Error message
+			}
+		}
+
+		inline void ChangeName(LPCSTR lpFileName, LPCSTR lpNewFileName)
+		{
+			Copy(lpFileName, lpNewFileName);
+			deleteFile(lpFileName);
 		}
 
 		inline void clientRectToFolderRect(RECT& cRect)
 		{
-			double l_offset = 0.3; 
+			double l_offset = 0.3;
 
-			cRect = {(LONG)(cRect.right * l_offset), cRect.top, cRect.right, cRect.bottom};
+			cRect = { (LONG)(cRect.right * l_offset), cRect.top, cRect.right, cRect.bottom };
 
 		}
 	}
