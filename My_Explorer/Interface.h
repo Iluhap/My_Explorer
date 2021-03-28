@@ -13,7 +13,16 @@ private:
 
 	RECT area;
 
+
+
+private:
 	Folder();
+
+	HWND CreateListView(HWND hwndParent, HINSTANCE hInst);
+
+	VOID SetView(HWND hWndListView, DWORD dwView);
+
+	BOOL InitListViewImageLists(HWND hWndListView, HINSTANCE hInst);
 
 public:
 
