@@ -5,7 +5,7 @@
 #define _WIN32_IE 0x0400
 #include "commctrl.h"
 
-HWND Folder::CreateListView(HWND hwndParent, HINSTANCE hInst)
+inline HWND Folder::CreateListView(HWND hwndParent, HINSTANCE hInst)
 {
 	INITCOMMONCONTROLSEX icex;           // Structure for control initialization.
 	icex.dwICC = ICC_LISTVIEW_CLASSES;
@@ -29,7 +29,7 @@ HWND Folder::CreateListView(HWND hwndParent, HINSTANCE hInst)
 
 	return (hWndListView);
 }
-VOID Folder::SetView(HWND hWndListView, DWORD dwView)
+inline VOID Folder::SetView(HWND hWndListView, DWORD dwView)
 {
 	// Retrieve the current window style. 
 	DWORD dwStyle = GetWindowLong(hWndListView, GWL_STYLE);
@@ -42,7 +42,7 @@ VOID Folder::SetView(HWND hWndListView, DWORD dwView)
 			(dwStyle & ~LVS_TYPEMASK) | dwView);
 	}               // Logical OR'ing of dwView with the result of 
 }                   // a bitwise AND between dwStyle and 
-BOOL Folder::InitListViewImageLists(HWND hWndListView, HINSTANCE hInst)
+inline BOOL Folder::InitListViewImageLists(HWND hWndListView, HINSTANCE hInst)
 {
 	HICON hiconItem;     // Icon for list-view items.
 	HIMAGELIST hLarge;   // Image list for icon view.

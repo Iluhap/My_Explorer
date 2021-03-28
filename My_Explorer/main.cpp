@@ -1,7 +1,12 @@
 // #include "windows.h" // підключення бібліотеки з функціями API
+
 #include <iostream>
-#include "FileSystem.cpp"
+#include "Interface.cpp"
 #include "resource.h"
+
+#define _WIN32_IE 0x0400
+#include "commctrl.h"
+
 // Глобальні змінні:
 HINSTANCE hInst; //Дескриптор програми
 LPCTSTR szWindowClass = "QWERTY";
@@ -12,6 +17,8 @@ BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 char buffer[100]; 
+
+Folder* pFolderWindow;
 
 // Основна програма
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -91,12 +98,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE: //Повідомлення приходить при створенні вікна
+
 		break;
 	case WM_PAINT: //Перемалювати вікно
 		hdc = BeginPaint(hWnd, &ps); //Почати графічний вивід
 		GetClientRect(hWnd, &rt); //Область вікна для малювання
-
-		
 
 		EndPaint(hWnd, &ps); //Закінчити графічний вивід
 		break;
