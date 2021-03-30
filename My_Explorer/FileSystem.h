@@ -69,20 +69,28 @@ namespace FileSystem
 	*/
 	namespace Utilities
 	{
-		std::vector<std::string> listDrives(); // Returns a list of logical drives on current machine
+		// Returns a vector of names of logical drives on current machine
+		std::vector<std::string> listDrives();
 
-		void Copy(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName);
+		void clientRectToFolderRect(RECT& cRect);
+		
+		//--- Methods below returns non-zero value if falure acquired ---//
 
-		void deleteFile(LPCSTR lpFileName);
+		bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName);
 
-		void DeleteDirectory(Directory* pDir); 
+		bool deleteFile(LPCSTR lpFileName);
 
-		void ChangeName(LPCSTR lpFileName, LPCSTR lpNewFileName); // TODO implement changing name of file
+		bool openFile(std::string fileName);
 
-		void CopyDirectory(); // TODO
+		bool changeFileName(LPCSTR lpFileName, LPCSTR lpNewFileName);
 
-		void MoveDirectory(); // TODO
+		// Recursive deleting of directory
+		bool deleteDirectory(Directory* pDir); 
+		
+		// Recursive copying of directory
+		bool copyDirectory(Directory* pDir, std::string newPath); 
 
-		void clientRectToFolderRect(RECT &cRect);
+		// Uses copy and delete methods for replacing of directory
+		bool moveDirectory(Directory* pDir, std::string newPath); // TODO
 	}
 }

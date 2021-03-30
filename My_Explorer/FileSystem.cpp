@@ -87,7 +87,8 @@ namespace FileSystem
 
 	namespace Utilities
 	{
-		// Implemention of utilities methods
+		//---------IMPLEMENTETION OF UTILITIES METHODS---------//
+		
 		inline std::vector<std::string> Utilities::listDrives()
 		{
 			char buffer[128];
@@ -111,63 +112,6 @@ namespace FileSystem
 			return drives;
 		}
 
-
-		// TODO find the way to notufy user about ERRORS acquired
-		inline void Copy(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)
-		{
-			BOOL status = TRUE;
-
-			if (!CopyFile(lpExistingFileName, lpNewFileName, status))
-			{
-				// ERROR message
-			}
-
-
-		}
-		inline void deleteFile(LPCSTR lpFileName)
-		{
-			if (!DeleteFile(lpFileName))
-			{
-				// ERROR message
-			}
-		}
-		
-		// TODO add comments 
-		inline void DeleteDirectory(Directory* pDir)
-		{
-			for (File file : pDir->getFiles())
-			{
-				std::string filename = (pDir->getPath() + '\\' + file.name).c_str();
-
-				deleteFile(filename.c_str());
-			}
-
-			std::vector<std::string> subDirs = pDir->getDirs();
-
-			for (std::string dir : subDirs)
-			{
-
-				if (!(dir == "." or dir == ".."))
-				{
-					Directory sub_dir(dir, pDir);
-
-					DeleteDirectory(&sub_dir);
-				}
-				
-			}
-
-			if (RemoveDirectory(pDir->getPath().c_str()))
-			{
-				// Error message
-			}
-		}
-
-		inline void ChangeName(LPCSTR lpFileName, LPCSTR lpNewFileName)
-		{
-			Copy(lpFileName, lpNewFileName);
-			deleteFile(lpFileName);
-		}
-
 		inline void clientRectToFolderRect(RECT& cRect)
 		{
 			double l_offset = 0.3;
@@ -175,5 +119,130 @@ namespace FileSystem
 			cRect = { (LONG)(cRect.right * l_offset), cRect.top, cRect.right, cRect.bottom };
 
 		}
+
+		inline bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)
+		{
+			BOOL status = TRUE;
+
+			if (!CopyFile(lpExistingFileName, lpNewFileName, status))
+				return 1;
+			else
+				return 0;
+
+
+		}
+
+		inline bool deleteFile(LPCSTR lpFileName)
+		{
+			if (!DeleteFile(lpFileName))
+				return 1;
+			else
+				return 0;
+		}
+
+		inline bool openFile(std::string fileName)
+		{
+			STARTUPINFO si;
+			PROCESS_INFORMATION pi;
+
+
+			std::string cmd = "notepad \"" + fileName + "\"";
+
+			ZeroMemory(&si, sizeof(si));
+			si.cb = sizeof(si);
+			ZeroMemory(&pi, sizeof(pi));
+			if (!CreateProcess(NULL, (LPSTR)(cmd.c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi))
+				return 1;
+			else
+				return 0;
+			// MessageBox(hWnd, "Smth went wrong in starting process", "Warning", MB_OK | MB_ICONWARNING);
+
+
+		}
+
+		inline bool changeFileName(LPCSTR lpFileName, LPCSTR lpNewFileName)
+		{
+			if (!MoveFileEx(lpFileName, lpNewFileName, MOVEFILE_COPY_ALLOWED))
+				return 1;
+			else
+				return 0;
+		}
+
+		inline bool deleteDirectory(Directory* pDir)
+		{
+			// Deleting all files from current directory
+			for (File file : pDir->getFiles())
+			{
+				std::string filename = (pDir->getPath() + '\\' + file.name).c_str();
+
+				deleteFile(filename.c_str());
+			}
+
+			std::vector<std::string> subDirs = pDir->getDirs(); // List all subdirectories
+
+			for (std::string dir : subDirs)
+			{
+				// Deleteing all directories except system dirs
+				if (!(dir == "." or dir == ".."))
+				{
+					Directory sub_dir(dir, pDir);
+
+					deleteDirectory(&sub_dir);
+				}
+
+			}
+
+			// Deleting current directory
+			if (!RemoveDirectory(pDir->getPath().c_str()))
+				return 1;
+			else
+				return 0;
+		}
+
+		inline bool copyDirectory(Directory* pDir, std::string copy_path)
+		{
+			if (!CreateDirectory(copy_path.c_str(), NULL))
+				return 1;
+			else
+			{
+				// Copying all files from current directory
+				for (File file : pDir->getFiles())
+				{
+					std::string filename = (pDir->getPath() + '\\' + file.name);
+					std::string copyFileName = (copy_path + "\\" + file.name);
+
+					copyFile(filename.c_str(), copyFileName.c_str());
+				}
+
+				std::vector<std::string> subDirs = pDir->getDirs(); // List all subdirectories
+
+				for (std::string dir : subDirs)
+				{
+					// Copying all directories except system dirs
+					if (!(dir == "." or dir == ".."))
+					{
+						Directory sub_dir(dir, pDir);
+
+						copyDirectory(&sub_dir, copy_path + "\\" + dir);
+					}
+
+				}
+				return 0;
+			}
+
+		}
+
+		inline bool moveDirectory(Directory* pDir, std::string newPath)
+		{
+			if (copyDirectory(pDir, newPath))
+				return 1;
+
+			if (deleteDirectory(pDir))
+				return 1;
+
+			return 0;
+		}
+
+		//---------END OF METHODS---------//	
 	}
 }
