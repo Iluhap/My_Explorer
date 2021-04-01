@@ -34,10 +34,11 @@ namespace FileSystem
 		}
 	}
 
+	//----GETTERS-----//
+
 	inline std::string Directory::getName() { return this->name; }
 	inline std::vector<File> Directory::getFiles() { return this->files; }
 	inline std::vector<std::string> Directory::getDirs() { return this->subDirectories; }
-
 	inline File Directory::getFileInfo(std::string filename)
 	{
 		auto file = std::find_if(this->files.begin(), this->files.end(),
@@ -51,7 +52,6 @@ namespace FileSystem
 		);
 		return *file;
 	}
-
 	inline std::string Directory::getPath()
 	{
 		if (this->parent == nullptr)
@@ -59,6 +59,7 @@ namespace FileSystem
 		else
 			return parent->getPath() + "\\" + this->name;
 	}
+
 	//---------END OF METHODS---------//
 
 
@@ -79,7 +80,6 @@ namespace FileSystem
 			this->extension = name.substr(idx + 1);
 		else
 			this->extension = "\0";
-		// ------------------------------- //
 	}
 
 	//---------END OF METHODS---------//
@@ -155,9 +155,6 @@ namespace FileSystem
 				return 1;
 			else
 				return 0;
-			// MessageBox(hWnd, "Smth went wrong in starting process", "Warning", MB_OK | MB_ICONWARNING);
-
-
 		}
 
 		inline bool changeFileName(LPCSTR lpFileName, LPCSTR lpNewFileName)

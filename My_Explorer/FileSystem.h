@@ -26,7 +26,7 @@ namespace FileSystem
 
 	
 	/*
-	*	Class used for interaction with drive's directories 
+	*	Class used for interaction with directories 
 	*/
 	class Directory
 	{
@@ -65,7 +65,7 @@ namespace FileSystem
 	};
 
 	/*
-	* Namespace with helpers methods
+	* Namespace with helper methods
 	*/
 	namespace Utilities
 	{
@@ -90,7 +90,7 @@ namespace FileSystem
 		// Recursive copying of directory
 		bool copyDirectory(Directory* pDir, std::string newPath); 
 
-		// Uses copy and delete methods for replacing of directory
-		bool moveDirectory(Directory* pDir, std::string newPath); // TODO
+		// Uses copy and delete methods for replacing directory
+		bool moveDirectory(Directory* pDir, std::string newPath);
 	}
 }
