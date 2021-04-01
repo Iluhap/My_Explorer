@@ -7,20 +7,33 @@
 #define _WIN32_IE 0x0400
 #include "commctrl.h"
 
-// Глобальні змінні:
-HINSTANCE hInst; //Дескриптор програми
-LPCTSTR szWindowClass = "QWERTY";
-LPCTSTR szTitle = "MyExplorer";
-// Попередній опис функцій
+
+// Declaration of functions 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-char buffer[100]; 
+void InitComponents(HWND hWnd, HINSTANCE hInst);
+void ReleaseComponents();
 
-Folder* pFolderWindow;
+//--- Global variables ---//
 
-// Основна програма
+HINSTANCE hInst; // Program descriptor
+LPCTSTR szWindowClass = "QWERTY";
+LPCTSTR szTitle = "MyExplorer";
+
+FolderView* pFolderView;
+
+Directory* directory;
+
+FolderTree* pFolderTree;
+
+HWND button;
+
+//--- End of variables ---//
+
+
+// Main program
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	setlocale(LC_ALL, "rus");
@@ -97,21 +110,53 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
-	case WM_CREATE: //Повідомлення приходить при створенні вікна
+	case WM_CREATE: // Повідомлення приходить при створенні вікна
+
+		InitComponents(hWnd, hInst);
 
 		break;
-	case WM_PAINT: //Перемалювати вікно
-		hdc = BeginPaint(hWnd, &ps); //Почати графічний вивід
-		GetClientRect(hWnd, &rt); //Область вікна для малювання
+	case WM_PAINT: // Перемалювати вікно
+		hdc = BeginPaint(hWnd, &ps); // Почати графічний вивід
+		GetClientRect(hWnd, &rt); // Область вікна для малювання
 
-		EndPaint(hWnd, &ps); //Закінчити графічний вивід
+		EndPaint(hWnd, &ps); // Закінчити графічний вивід
 		break;
-	case WM_DESTROY: //Завершення роботи
+	case WM_DESTROY: // Завершення роботи
+
+		ReleaseComponents();
+
 		PostQuitMessage(0);
 		break;
 	default:
-		//Обробка повідомлень, які не оброблені користувачем
+		// Обробка повідомлень, які не оброблені користувачем
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+void InitComponents(HWND hWnd, HINSTANCE hInst)
+{
+	// TODO 
+
+	directory = new Directory("C:", nullptr);
+	
+	RECT rt;
+	GetClientRect(hWnd, &rt);
+
+	pFolderView = new FolderView(directory, rt);
+
+	pFolderView->Create(hWnd, hInst);
+
+	// pFolderTreeWindow = new FolderTree();
+}
+
+void ReleaseComponents()
+{
+	// TODO Release of memory
+
+	delete directory;
+
+	delete pFolderView;
+
+	// delete pFolderTree;
 }
