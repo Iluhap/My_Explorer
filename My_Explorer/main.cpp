@@ -1,12 +1,6 @@
-// #include "windows.h" // підключення бібліотеки з функціями API
-
 #include <iostream>
 #include "Interface.cpp"
 #include "resource.h"
-
-#define _WIN32_IE 0x0400
-#include "commctrl.h"
-
 
 // Declaration of functions 
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -19,7 +13,7 @@ void ReleaseComponents();
 //--- Global variables ---//
 
 HINSTANCE hInst; // Program descriptor
-LPCTSTR szWindowClass = "QWERTY";
+LPCTSTR szWindowClass = "EXPLORER";
 LPCTSTR szTitle = "MyExplorer";
 
 FolderView* pFolderView;
@@ -77,15 +71,19 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 // Створює вікно програми і зберігає дескриптор програми в змінній hInst
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
+
+	unsigned sizeX = round(GetSystemMetrics(SM_CXSCREEN) / 2);
+	unsigned sizeY = round(GetSystemMetrics(SM_CYSCREEN) / 2);
+
 	HWND hWnd;
 	hInst = hInstance; //зберігає дескриптор додатка в змінній hInst
 	hWnd = CreateWindow(szWindowClass, // ім’я класу вікна
 		szTitle, // назва програми
-		WS_OVERLAPPEDWINDOW, // стиль вікна
+		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, // стиль вікна
 		CW_USEDEFAULT, // положення по Х
 		CW_USEDEFAULT, // положення по Y
-		CW_USEDEFAULT, // розмір по Х
-		CW_USEDEFAULT, // розмір по Y
+		sizeX, // розмір по Х
+		sizeY, // розмір по Y
 		NULL, // дескриптор батьківського вікна
 		NULL, // дескриптор меню вікна
 		hInstance, // дескриптор програми
