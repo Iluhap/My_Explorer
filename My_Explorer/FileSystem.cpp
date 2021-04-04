@@ -114,10 +114,10 @@ namespace FileSystem
 
 		inline void clientRectToFolderRect(RECT& cRect)
 		{
-			double l_offset = 0.3;
+			double left_offset = 0.25;
+			double bottom_offset = 0.9;
 
-			cRect = { (LONG)(cRect.right * l_offset), cRect.top, cRect.right, cRect.bottom };
-
+			cRect = { (int)round(cRect.right * left_offset), cRect.top, cRect.right, (int)round(cRect.bottom * bottom_offset) };
 		}
 
 		inline bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)

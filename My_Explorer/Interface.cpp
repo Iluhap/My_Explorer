@@ -120,7 +120,11 @@ inline FolderView::FolderView(Directory* dir, const RECT& cRect)
 {
 	this->currDir = dir;
 
-	setRect(RECT{ (int)round(cRect.right * 0.3), cRect.top, cRect.right, cRect.bottom });
+	RECT tmpRect = cRect;
+
+	Utilities::clientRectToFolderRect(tmpRect);
+
+	setRect(tmpRect);
 }
 
 inline void FolderView::Create(HWND hWnd, HINSTANCE hInst)
