@@ -112,14 +112,6 @@ namespace FileSystem
 			return drives;
 		}
 
-		inline void clientRectToFolderRect(RECT& cRect)
-		{
-			double left_offset = 0.25;
-			double bottom_offset = 0.9;
-
-			cRect = { (int)round(cRect.right * left_offset), cRect.top, cRect.right, (int)round(cRect.bottom * bottom_offset) };
-		}
-
 		inline bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)
 		{
 			BOOL status = TRUE;

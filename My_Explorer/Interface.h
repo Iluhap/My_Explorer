@@ -7,7 +7,7 @@ using namespace FileSystem;
 class FolderView
 {
 private: // class data
-	Directory *currDir = nullptr; // Pointer to Directory structure
+	Directory* currDir = nullptr; // Pointer to Directory structure
 
 	HWND hListBox = nullptr; // Handle of List-View Window
 
@@ -26,13 +26,16 @@ private: // class private methods
 
 	bool InitListViewColumns();
 
+	void rectTransform(RECT& cRect, double left_scale, double top_scale, double right_scale, double bottom_scale);
+	
+
 public: // class public methods
 
 	FolderView(Directory* dir, const RECT& cRect);
 
 	void Create(HWND hWmd, HINSTANCE hInst);
 
-	void setRect(const RECT& cRect);
+	void setListViewRect(const RECT& cRect);
 
 	void setDir(Directory& directory);
 };

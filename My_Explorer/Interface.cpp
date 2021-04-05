@@ -55,6 +55,17 @@ inline bool FolderView::InitListViewColumns()
 	return true;
 }
 
+inline void FolderView::rectTransform(RECT& cRect, double left_scale, double top_scale, double right_scale, double bottom_scale)
+{
+	cRect =
+	{
+		(LONG)round(cRect.right * left_scale),
+		(LONG)round(cRect.bottom * top_scale),
+		(LONG)round(cRect.right * right_scale),
+		(LONG)round(cRect.bottom * bottom_scale)
+	};
+}
+
 inline bool FolderView::InsertListViewItems() // TODO implement adding other info about items
 {
 	LVITEM lvI;
@@ -120,11 +131,11 @@ inline FolderView::FolderView(Directory* dir, const RECT& cRect)
 {
 	this->currDir = dir;
 
-	RECT tmpRect = cRect;
+	RECT folderView = cRect;
+	rectTransform(folderView, 0.25, 0.05, 1, 0.9);
+	setListViewRect(folderView);
 
-	Utilities::clientRectToFolderRect(tmpRect);
 
-	setRect(tmpRect);
 }
 
 inline void FolderView::Create(HWND hWnd, HINSTANCE hInst)
@@ -137,7 +148,7 @@ inline void FolderView::Create(HWND hWnd, HINSTANCE hInst)
 
 }
 
-inline void FolderView::setRect(const RECT& rect)
+inline void FolderView::setListViewRect(const RECT& rect)
 {
 	this->area = rect;
 }
