@@ -1,6 +1,5 @@
 #include <iostream>
-#include "Interface.cpp"
-#include "resource.h"
+#include "Interface.h"
 
 // Declaration of functions 
 ATOM MyRegisterClass(HINSTANCE hInstance);

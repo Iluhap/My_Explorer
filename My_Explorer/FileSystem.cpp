@@ -1,20 +1,21 @@
 #include "FileSystem.h"
 
+
 namespace FileSystem
 {
 	//---------IMPLEMENTETION OF DIRECTORY'S METHODS---------//
 
-	inline Directory::Directory(std::string name, Directory* parent) : name(name), parent(parent)
+	Directory::Directory(std::string name, Directory* parent) : name(name), parent(parent)
 	{
 		find_files();
 	}
 
-	inline void Directory::Update()
+	void Directory::Update()
 	{
 		this->find_files();
 	}
 
-	inline void Directory::find_files()
+	void Directory::find_files()
 	{
 		std::string path = this->getPath();
 
@@ -36,10 +37,10 @@ namespace FileSystem
 
 	//----GETTERS-----//
 
-	inline std::string Directory::getName() { return this->name; }
-	inline std::vector<File> Directory::getFiles() { return this->files; }
-	inline std::vector<std::string> Directory::getDirs() { return this->subDirectories; }
-	inline File Directory::getFileInfo(std::string filename)
+	std::string Directory::getName() { return this->name; }
+	std::vector<File> Directory::getFiles() { return this->files; }
+	std::vector<std::string> Directory::getDirs() { return this->subDirectories; }
+	File Directory::getFileInfo(std::string filename)
 	{
 		auto file = std::find_if(this->files.begin(), this->files.end(),
 			[filename](const File& elem)
@@ -52,7 +53,7 @@ namespace FileSystem
 		);
 		return *file;
 	}
-	inline std::string Directory::getPath()
+	std::string Directory::getPath()
 	{
 		if (this->parent == nullptr)
 			return this->name;
@@ -64,7 +65,7 @@ namespace FileSystem
 
 
 	//---------IMPLEMENTETION OF FILE'S METHODS---------//
-	inline File::File(const WIN32_FIND_DATA& data)
+	File::File(const WIN32_FIND_DATA& data)
 	{
 		this->name = data.cFileName; // Saving name of file
 
@@ -88,8 +89,8 @@ namespace FileSystem
 	namespace Utilities
 	{
 		//---------IMPLEMENTETION OF UTILITIES METHODS---------//
-		
-		inline std::vector<std::string> Utilities::listDrives()
+
+		std::vector<std::string> Utilities::listDrives()
 		{
 			char buffer[128];
 
@@ -112,7 +113,7 @@ namespace FileSystem
 			return drives;
 		}
 
-		inline bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)
+		bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName)
 		{
 			BOOL status = TRUE;
 
@@ -124,7 +125,7 @@ namespace FileSystem
 
 		}
 
-		inline bool deleteFile(LPCSTR lpFileName)
+		bool deleteFile(LPCSTR lpFileName)
 		{
 			if (!DeleteFile(lpFileName))
 				return 1;
@@ -132,7 +133,7 @@ namespace FileSystem
 				return 0;
 		}
 
-		inline bool openFile(std::string fileName)
+		bool openFile(std::string fileName)
 		{
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
@@ -149,7 +150,7 @@ namespace FileSystem
 				return 0;
 		}
 
-		inline bool changeFileName(LPCSTR lpFileName, LPCSTR lpNewFileName)
+		bool changeFileName(LPCSTR lpFileName, LPCSTR lpNewFileName)
 		{
 			if (!MoveFileEx(lpFileName, lpNewFileName, MOVEFILE_COPY_ALLOWED))
 				return 1;
@@ -157,7 +158,7 @@ namespace FileSystem
 				return 0;
 		}
 
-		inline bool deleteDirectory(Directory* pDir)
+		bool deleteDirectory(Directory* pDir)
 		{
 			// Deleting all files from current directory
 			for (File file : pDir->getFiles())
@@ -188,7 +189,7 @@ namespace FileSystem
 				return 0;
 		}
 
-		inline bool copyDirectory(Directory* pDir, std::string copy_path)
+		bool copyDirectory(Directory* pDir, std::string copy_path)
 		{
 			if (!CreateDirectory(copy_path.c_str(), NULL))
 				return 1;
@@ -221,7 +222,7 @@ namespace FileSystem
 
 		}
 
-		inline bool moveDirectory(Directory* pDir, std::string newPath)
+		bool moveDirectory(Directory* pDir, std::string newPath)
 		{
 			if (copyDirectory(pDir, newPath))
 				return 1;

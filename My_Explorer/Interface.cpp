@@ -1,15 +1,12 @@
-#pragma comment(lib, "comctl32.lib")
-
-
 #include "Interface.h"
 
-#include "resource.h"
-
+#pragma comment(lib, "comctl32.lib")
 #include "commctrl.h"
 
-// Method used to interact with List-View window //
 
-inline void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
+// FolderView::FolderView() : currDir(nullptr), hListBox(nullptr), columns({ "Name", "Type", "Date" }), area({ 0,0,0,0 }) {}
+
+void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
 {
 	INITCOMMONCONTROLSEX icex;           // Structure for control initialization.
 	icex.dwICC = ICC_LISTVIEW_CLASSES;
@@ -28,7 +25,7 @@ inline void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
 		NULL);
 }
 
-inline bool FolderView::InitListViewColumns()
+bool FolderView::InitListViewColumns()
 {
 	// Initialize the LVCOLUMN structure.
 	// The mask specifies that the format, width, text,
@@ -48,14 +45,19 @@ inline bool FolderView::InitListViewColumns()
 		lvc.iSubItem = iCol;
 		lvc.pszText = (LPSTR)(column.c_str());
 
-	// Insert the columns into the list view.
+		// Insert the columns into the list view.
 		if (ListView_InsertColumn(this->hListBox, iCol++, &lvc) == -1)
 			return false;
 	}
 	return true;
 }
 
-inline void FolderView::rectTransform(RECT& cRect, double left_scale, double top_scale, double right_scale, double bottom_scale)
+void FolderView::rectTransform(
+	RECT& cRect, 
+	double left_scale,
+	double top_scale,
+	double right_scale,
+	double bottom_scale)
 {
 	cRect =
 	{
@@ -66,7 +68,7 @@ inline void FolderView::rectTransform(RECT& cRect, double left_scale, double top
 	};
 }
 
-inline bool FolderView::InsertListViewItems() // TODO implement adding other info about items
+bool FolderView::InsertListViewItems() // TODO implement adding other info about items
 {
 	LVITEM lvI;
 
@@ -116,7 +118,7 @@ inline bool FolderView::InsertListViewItems() // TODO implement adding other inf
 
 		char date[30];
 		wsprintf(date, "%d.%d.%d", file.time.wDay, file.time.wMonth, file.time.wYear); // TODO find out better way to concatenate date
-		
+
 		ListView_SetItemText(this->hListBox, index, 2, (LPSTR)(date));
 
 		index++;
@@ -127,7 +129,7 @@ inline bool FolderView::InsertListViewItems() // TODO implement adding other inf
 
 //----------------------------------------------// 
 
-inline FolderView::FolderView(Directory* dir, const RECT& cRect)
+FolderView::FolderView(Directory* dir, const RECT& cRect)
 {
 	this->currDir = dir;
 
@@ -138,7 +140,7 @@ inline FolderView::FolderView(Directory* dir, const RECT& cRect)
 
 }
 
-inline void FolderView::Create(HWND hWnd, HINSTANCE hInst)
+void FolderView::Create(HWND hWnd, HINSTANCE hInst)
 {
 	CreateListView(hWnd, hInst);
 
@@ -148,12 +150,12 @@ inline void FolderView::Create(HWND hWnd, HINSTANCE hInst)
 
 }
 
-inline void FolderView::setListViewRect(const RECT& rect)
+void FolderView::setListViewRect(const RECT& rect)
 {
 	this->area = rect;
 }
 
-inline void FolderView::setDir(Directory& directory)
+void FolderView::setDir(Directory& directory)
 {
 	*(this->currDir) = directory;
 
@@ -161,7 +163,7 @@ inline void FolderView::setDir(Directory& directory)
 }
 
 // Updating the list of files and directories
-inline void FolderView::updateList()
+void FolderView::updateList()
 {
 
 	this->currDir->Update(); // Updating current Directory

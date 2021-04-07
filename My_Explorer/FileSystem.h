@@ -71,8 +71,6 @@ namespace FileSystem
 	{
 		// Returns a vector of names of logical drives on current machine
 		std::vector<std::string> listDrives();
-
-		void clientRectToFolderRect(RECT& cRect);
 		
 		//--- Methods below returns non-zero value if falure acquired ---//
 

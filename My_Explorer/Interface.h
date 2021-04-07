@@ -1,22 +1,21 @@
-#pragma once
-
-#include "FileSystem.cpp"
+#include "FileSystem.h"
 
 using namespace FileSystem;
+
 
 class FolderView
 {
 private: // class data
-	Directory* currDir = nullptr; // Pointer to Directory structure
+	Directory* currDir; // Pointer to Directory structure
 
-	HWND hListBox = nullptr; // Handle of List-View Window
+	HWND hListBox; // Handle of List-View Window
 
-	std::vector<std::string> columns{ "Name", "Type", "Date" }; // Columns of List-View
+	std::vector<std::string> columns; // Columns of List-View
 
 	RECT area; // ListView area
 
 private: // class private methods
-	FolderView();
+	// FolderView();
 
 	void updateList();
 
@@ -26,7 +25,10 @@ private: // class private methods
 
 	bool InitListViewColumns();
 
-	void rectTransform(RECT& cRect, double left_scale, double top_scale, double right_scale, double bottom_scale);
+	void rectTransform(RECT& cRect, double left_scale,
+									double top_scale, 
+									double right_scale, 
+									double bottom_scale);
 	
 
 public: // class public methods
@@ -38,6 +40,9 @@ public: // class public methods
 	void setListViewRect(const RECT& cRect);
 
 	void setDir(Directory& directory);
+
+	void HandleWM_Notify(LPARAM lParam);
+
 };
 
 class FolderTree;
