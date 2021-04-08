@@ -12,10 +12,12 @@ private: // class data
 
 	std::vector<std::string> columns; // Columns of List-View
 
+	std::vector<std::vector<std::string>> listViewTab; 
+
 	RECT area; // ListView area
 
 private: // class private methods
-	// FolderView();
+	FolderView();
 
 	void updateList();
 
@@ -25,12 +27,13 @@ private: // class private methods
 
 	bool InitListViewColumns();
 
+	void FillListViewTab();
+
 	void rectTransform(RECT& cRect, double left_scale,
 									double top_scale, 
 									double right_scale, 
 									double bottom_scale);
 	
-
 public: // class public methods
 
 	FolderView(Directory* dir, const RECT& cRect);

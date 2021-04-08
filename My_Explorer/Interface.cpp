@@ -4,7 +4,11 @@
 #include "commctrl.h"
 
 
-// FolderView::FolderView() : currDir(nullptr), hListBox(nullptr), columns({ "Name", "Type", "Date" }), area({ 0,0,0,0 }) {}
+FolderView::FolderView() :
+	currDir(nullptr),
+	hListBox(nullptr),
+	columns({ "Name", "Type", "Date" }),
+	area({ 0,0,0,0 }) {}
 
 void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
 {
@@ -52,22 +56,6 @@ bool FolderView::InitListViewColumns()
 	return true;
 }
 
-void FolderView::rectTransform(
-	RECT& cRect, 
-	double left_scale,
-	double top_scale,
-	double right_scale,
-	double bottom_scale)
-{
-	cRect =
-	{
-		(LONG)round(cRect.right * left_scale),
-		(LONG)round(cRect.bottom * top_scale),
-		(LONG)round(cRect.right * right_scale),
-		(LONG)round(cRect.bottom * bottom_scale)
-	};
-}
-
 bool FolderView::InsertListViewItems() // TODO implement adding other info about items
 {
 	LVITEM lvI;
@@ -81,45 +69,21 @@ bool FolderView::InsertListViewItems() // TODO implement adding other info about
 	lvI.iSubItem = 0;
 	lvI.state = 0;
 
-	std::vector<std::string> dirs = this->currDir->getDirs(); // List of directories
+	// Initialize LVITEM members that are different for each item.
 
-	std::vector<File> files = this->currDir->getFiles(); // List of files
-
-	 // Initialize LVITEM members that are different for each item.
-
-	for (std::string dirName : dirs)
+	for (auto elem : this->listViewTab)
 	{
 		lvI.iItem = index;
 		lvI.iImage = index;
 
-		lvI.pszText = (LPSTR)(dirName.c_str());
+		lvI.pszText = (LPSTR)(elem[0].c_str());
 
 		// Insert items into the list.
 		if (ListView_InsertItem(this->hListBox, &lvI) == -1)
 			return false;
 
-		// ListView_SetItemText(this->hListBox, index, 1, (LPSTR)"Folder");
-
-		index++;
-	}
-
-	for (File file : files)
-	{
-		lvI.iItem = index;
-		lvI.iImage = index;
-
-		lvI.pszText = (LPSTR)(file.name.c_str());
-
-		// Insert items into the list.
-		if (ListView_InsertItem(this->hListBox, &lvI) == -1)
-			return false;
-
-		ListView_SetItemText(this->hListBox, index, 1, (LPSTR)file.extension.c_str());
-
-		char date[30];
-		wsprintf(date, "%d.%d.%d", file.time.wDay, file.time.wMonth, file.time.wYear); // TODO find out better way to concatenate date
-
-		ListView_SetItemText(this->hListBox, index, 2, (LPSTR)(date));
+		for (int i = 1; i < elem.size(); i++)
+			ListView_SetItemText(this->hListBox, index, i, (LPSTR)elem[i].c_str());
 
 		index++;
 	}
@@ -127,17 +91,51 @@ bool FolderView::InsertListViewItems() // TODO implement adding other info about
 	return true;
 }
 
+void FolderView::FillListViewTab()
+{
+	// Adding directories to listViewTab
+	for (std::string subdir : this->currDir->getDirs())
+	{
+		this->listViewTab.push_back({ subdir, "Folder", "" });
+	}
+
+	// Adding files to listViewTab
+	for (File file : this->currDir->getFiles())
+	{
+		char date[100];
+
+		sprintf_s(date, "%d.%d.%d", file.time.wDay, file.time.wMonth, file.time.wYear);
+
+		this->listViewTab.push_back({ file.name, file.extension, date });
+	}
+}
+
+void FolderView::rectTransform(RECT& cRect, double left_scale,
+	double top_scale,
+	double right_scale,
+	double bottom_scale)
+{
+	size_t xSize = (cRect.right - cRect.left);
+	size_t ySize = (cRect.bottom - cRect.top);
+
+	cRect =
+	{
+		(LONG)round(cRect.left + xSize * (1 - left_scale)),
+		(LONG)round(cRect.top + ySize * (1 - top_scale)),
+		(LONG)round(cRect.right - (xSize * (1 - right_scale))),
+		(LONG)round(cRect.bottom - (ySize * (1 - bottom_scale)))
+	};
+}
+
 //----------------------------------------------// 
 
-FolderView::FolderView(Directory* dir, const RECT& cRect)
+FolderView::FolderView(Directory* dir, const RECT& cRect) : FolderView()
 {
 	this->currDir = dir;
 
 	RECT folderView = cRect;
-	rectTransform(folderView, 0.25, 0.05, 1, 0.9);
+	rectTransform(folderView, 0.75, 0.95, 1, 0.9);
 	setListViewRect(folderView);
-
-
 }
 
 void FolderView::Create(HWND hWnd, HINSTANCE hInst)
@@ -145,6 +143,8 @@ void FolderView::Create(HWND hWnd, HINSTANCE hInst)
 	CreateListView(hWnd, hInst);
 
 	InitListViewColumns();
+
+	FillListViewTab();
 
 	InsertListViewItems();
 
