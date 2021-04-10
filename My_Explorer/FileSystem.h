@@ -74,13 +74,13 @@ namespace FileSystem
 		
 		//--- Methods below returns non-zero value if falure acquired ---//
 
-		bool copyFile(LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName);
+		bool copyFile(std::string lpExistingFileName, std::string lpNewFileName);
 
-		bool deleteFile(LPCSTR lpFileName);
+		bool deleteFile(std::string lpFileName);
 
 		bool openFile(std::string fileName);
 
-		bool changeFileName(LPCSTR lpFileName, LPCSTR lpNewFileName);
+		bool changeFileName(std::string lpFileName, std::string lpNewFileName);
 
 		// Recursive deleting of directory
 		bool deleteDirectory(Directory* pDir); 
