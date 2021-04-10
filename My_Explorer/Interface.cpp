@@ -82,7 +82,7 @@ bool FolderView::InsertListViewItems() // TODO implement adding other info about
 		if (ListView_InsertItem(this->hListBox, &lvI) == -1)
 			return false;
 
-		for (int i = 1; i < elem.size(); i++)
+		for (size_t i = 1; i < elem.size(); i++)
 			ListView_SetItemText(this->hListBox, index, i, (LPSTR)elem[i].c_str());
 
 		index++;
@@ -110,7 +110,8 @@ void FolderView::FillListViewTab()
 	}
 }
 
-void FolderView::rectTransform(RECT& cRect, double left_scale,
+void FolderView::rectTransform(RECT& cRect,
+	double left_scale,
 	double top_scale,
 	double right_scale,
 	double bottom_scale)
@@ -162,6 +163,21 @@ void FolderView::setDir(Directory& directory)
 	this->updateList();
 }
 
+std::vector<std::string> FolderView::getElement(unsigned index)
+{
+	return this->listViewTab[index];
+}
+
+HWND FolderView::getListHandle()
+{
+	return this->hListBox;
+}
+
+Directory* FolderView::getDir()
+{
+	return this->currDir;
+}
+
 // Updating the list of files and directories
 void FolderView::updateList()
 {
@@ -171,3 +187,96 @@ void FolderView::updateList()
 	InsertListViewItems();
 
 }
+
+//-----BUTTONS'S METHODS-----//
+
+Buttons::Buttons(HWND hParent, HINSTANCE hInst)
+{
+
+	HWND hButton = CreateWindow("button",
+		"Open",
+		WS_CHILD | WS_VISIBLE | WS_BORDER,
+		50, 100,
+		60,
+		20,
+		hParent,
+		(HMENU)NULL,
+		hInst,
+		NULL);
+
+	this->buttons.push_back({ hButton, OpenHandler });
+
+
+	hButton = CreateWindow("button",
+		"Copy",
+		WS_CHILD | WS_VISIBLE | WS_BORDER,
+		50, 200,
+		60,
+		20,
+		hParent,
+		(HMENU)NULL,
+		hInst,
+		NULL);
+
+	this->buttons.push_back({ hButton, CopyHandler });
+
+	hButton = CreateWindow("button",
+		"Move",
+		WS_CHILD | WS_VISIBLE | WS_BORDER,
+		50, 300,
+		60,
+		20,
+		hParent,
+		(HMENU)NULL,
+		hInst,
+		NULL);
+
+	this->buttons.push_back({ hButton, MoveHandler });
+
+	hButton = CreateWindow("button",
+		"Delete",
+		WS_CHILD | WS_VISIBLE | WS_BORDER,
+		50, 400,
+		60,
+		20,
+		hParent,
+		(HMENU)NULL,
+		hInst,
+		NULL);
+
+	this->buttons.push_back({ hButton, DeleteHandler });
+
+}
+
+void Buttons::Handler(LPARAM lParam)
+{
+	HWND hPressedButton = (HWND)lParam;
+
+	for (std::pair<HWND, buttonHandler> pair : this->buttons)
+	{
+		if (pair.first == hPressedButton)
+		{
+			pair.second();
+		}
+	}
+}
+
+
+// TODO implement handle mathods
+void OpenHandler()
+{
+	// MessageBox(NULL, "WORK", "Open", MB_OK);
+}
+void CopyHandler()
+{
+	// MessageBox(NULL, "WORK", "Copy", MB_OK);
+}
+void MoveHandler()
+{
+	// MessageBox(NULL, "WORK", "Move", MB_OK);
+}
+void DeleteHandler()
+{
+	// MessageBox(NULL, "WORK", "Delete", MB_OK);
+}
+//-----END OF BUTTONS'S METHODS-----//
