@@ -206,7 +206,6 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 
 	this->buttons.push_back({ hButton, OpenHandler });
 
-
 	hButton = CreateWindow("button",
 		"Copy",
 		WS_CHILD | WS_VISIBLE | WS_BORDER,
@@ -231,7 +230,7 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 		hInst,
 		NULL);
 
-	this->buttons.push_back({ hButton, MoveHandler });
+	// this->buttons.push_back({ hButton, MoveHandler });
 
 	hButton = CreateWindow("button",
 		"Delete",
@@ -244,38 +243,57 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 		hInst,
 		NULL);
 
-	this->buttons.push_back({ hButton, DeleteHandler });
+	// this->buttons.push_back({ hButton, DeleteHandler });
 
 }
 
-void Buttons::Handler(LPARAM lParam)
+void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
 {
 	HWND hPressedButton = (HWND)lParam;
 
-	for (std::pair<HWND, buttonHandler> pair : this->buttons)
+	for (auto button : this->buttons)
 	{
-		if (pair.first == hPressedButton)
+		if (button.handle == hPressedButton)
 		{
-			pair.second();
+			button.pFunction(pFolderView);
 		}
 	}
 }
 
 
 // TODO implement handle mathods
-void OpenHandler()
+void OpenHandler(FolderView* pFolderView)
 {
-	// MessageBox(NULL, "WORK", "Open", MB_OK);
+	HWND hList = pFolderView->getListHandle();
+
+	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+
+	if (id >= SendMessage(hList, LVM_GETITEMCOUNT, 0, 0))
+		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+	else
+	{
+		std::vector<std::string> elem = pFolderView->getElement(id);
+
+		std::string name = elem[0];
+		std::string type = elem[1];
+
+		if (type == "Folder")
+		{
+			// TODO implement opening of directory
+		}
+		else
+			Utilities::openFile(pFolderView->getDir()->getPath() + "\\" + name); // Opening of file
+	}
 }
-void CopyHandler()
+void CopyHandler(FolderView* pFolderView)
 {
 	// MessageBox(NULL, "WORK", "Copy", MB_OK);
 }
-void MoveHandler()
+void MoveHandler(FolderView* pFolderView)
 {
 	// MessageBox(NULL, "WORK", "Move", MB_OK);
 }
-void DeleteHandler()
+void DeleteHandler(FolderView* pFolderView)
 {
 	// MessageBox(NULL, "WORK", "Delete", MB_OK);
 }

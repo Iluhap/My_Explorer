@@ -56,36 +56,42 @@ public: // class public methods
 
 };
 
-void OpenHandler();
-void CopyHandler();
-void MoveHandler();
-void DeleteHandler();
 
 class Buttons
 {
-	typedef void (*buttonHandler)(); // pointer to methods of Buttons class
+	typedef void (*buttonHandler)(FolderView*); // pointer to methods of Buttons class
+
+	friend void OpenHandler(FolderView*);
+	friend void CopyHandler(FolderView*);
+	friend void MoveHandler(FolderView*);
+	friend void DeleteHandler(FolderView*);
 
 private: // data
 
+	struct Button
+	{
+		HWND handle;
+		buttonHandler pFunction;
+	};
+
 	// structure of buttons handles and their handle functions 
-	std::vector<std::pair<HWND, buttonHandler>> buttons; 
+	std::vector<Button> buttons; 
 
 private:
 
 	Buttons();
 
-	friend void OpenHandler();
-	friend void CopyHandler();
-	friend void MoveHandler();
-	friend void DeleteHandler();
-
 public:
 
 	Buttons(HWND hParent, HINSTANCE hInst);
 
-	void Handler(LPARAM lParam);
+	void Handler(LPARAM lParam, FolderView* pFolderView);
 
 };
 
+void OpenHandler(FolderView*);
+void CopyHandler(FolderView*);
+void MoveHandler(FolderView*);
+void DeleteHandler(FolderView*);
 
 class FolderTree;

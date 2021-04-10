@@ -1,6 +1,9 @@
 #include <iostream>
 #include "Interface.h"
 
+#pragma comment(lib, "comctl32.lib")
+#include "commctrl.h"
+
 // Declaration of functions 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -8,6 +11,8 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 void InitComponents(HWND hWnd, HINSTANCE hInst);
 void ReleaseComponents();
+
+void WM_COMMAND_Handler(LPARAM lParam);
 
 //--- Global variables ---//
 
@@ -21,7 +26,7 @@ Directory* directory;
 
 FolderTree* pFolderTree;
 
-HWND button;
+Buttons* pButtons;
 
 //--- End of variables ---//
 
@@ -118,6 +123,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		EndPaint(hWnd, &ps); // Закінчити графічний вивід
 		break;
+
+	case WM_COMMAND:
+		pButtons->Handler(lParam, pFolderView);
+		break;
+
 	case WM_DESTROY: // Завершення роботи
 
 		ReleaseComponents();
@@ -136,13 +146,15 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 	// TODO 
 
 	directory = new Directory("C:", nullptr);
-	
+
 	RECT rt;
 	GetClientRect(hWnd, &rt);
 
 	pFolderView = new FolderView(directory, rt);
 
 	pFolderView->Create(hWnd, hInst);
+
+	pButtons = new Buttons(hWnd, hInst);
 
 	// pFolderTreeWindow = new FolderTree();
 }
@@ -154,6 +166,8 @@ void ReleaseComponents()
 	delete directory;
 
 	delete pFolderView;
+
+	delete pButtons;
 
 	// delete pFolderTree;
 }
