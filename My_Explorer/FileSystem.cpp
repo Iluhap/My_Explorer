@@ -5,7 +5,7 @@ namespace FileSystem
 {
 	//---------IMPLEMENTETION OF DIRECTORY'S METHODS---------//
 
-	Directory::Directory(std::string name, Directory* parent) : name(name), parent(parent)
+	Directory::Directory(string name, Directory* parent) : name(name), parent(parent)
 	{
 		find_files();
 	}
@@ -17,7 +17,7 @@ namespace FileSystem
 
 	void Directory::find_files()
 	{
-		std::string path = this->getPath();
+		string path = this->getPath();
 
 		WIN32_FIND_DATA data;
 		HANDLE hFind = FindFirstFile((path + "\\*").c_str(), &data);      // DIRECTORY
@@ -37,12 +37,12 @@ namespace FileSystem
 
 	//----GETTERS-----//
 
-	std::string Directory::getName() { return this->name; }
-	std::vector<File> Directory::getFiles() { return this->files; }
-	std::vector<std::string> Directory::getDirs() { return this->subDirectories; }
-	File Directory::getFileInfo(std::string filename)
+	string Directory::getName() { return this->name; }
+	vector<File> Directory::getFiles() { return this->files; }
+	vector<string> Directory::getDirs() { return this->subDirectories; }
+	File Directory::getFileInfo(string filename)
 	{
-		auto file = std::find_if(this->files.begin(), this->files.end(),
+		auto file = find_if(this->files.begin(), this->files.end(),
 			[filename](const File& elem)
 		{
 			if (elem.name == filename)
@@ -53,7 +53,7 @@ namespace FileSystem
 		);
 		return *file;
 	}
-	std::string Directory::getPath()
+	string Directory::getPath()
 	{
 		if (this->parent == nullptr)
 			return this->name;
@@ -73,11 +73,11 @@ namespace FileSystem
 
 		// -----Saving file extension----- //
 
-		std::string::size_type idx;
+		string::size_type idx;
 
 		idx = name.rfind('.');
 
-		if (idx != std::string::npos)
+		if (idx != string::npos)
 			this->extension = name.substr(idx + 1);
 		else
 			this->extension = "\0";
@@ -90,15 +90,15 @@ namespace FileSystem
 	{
 		//---------IMPLEMENTETION OF UTILITIES METHODS---------//
 
-		std::vector<std::string> Utilities::listDrives()
+		vector<string> Utilities::listDrives()
 		{
 			char buffer[128];
 
 			GetLogicalDriveStrings(128, buffer);
 
-			std::vector<std::string> drives;
+			vector<string> drives;
 
-			std::string acum;
+			string acum;
 
 			for (size_t i = 0; i < 40; i++)
 			{
@@ -113,12 +113,12 @@ namespace FileSystem
 			return drives;
 		}
 
-		bool openFile(std::string fileName)
+		bool openFile(string fileName)
 		{
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
 
-			std::string cmd = "notepad \"" + fileName + "\"";
+			string cmd = "notepad \"" + fileName + "\"";
 
 			ZeroMemory(&si, sizeof(si));
 			si.cb = sizeof(si);
@@ -129,11 +129,11 @@ namespace FileSystem
 				return true;
 		}
 
-		bool copyFile(std::string lpExistingFileName, std::string lpNewFileName)
+		bool copyFile(string existingFileName, string newFileName)
 		{
 			BOOL status = TRUE;
 
-			if (!CopyFile(lpExistingFileName.c_str(), lpNewFileName.c_str(), status))
+			if (!CopyFile(existingFileName.c_str(), newFileName.c_str(), status))
 				return false;
 			else
 				return true;
@@ -141,23 +141,23 @@ namespace FileSystem
 
 		}
 
-		bool deleteFile(std::string lpFileName)
+		bool deleteFile(string fileName)
 		{
-			if (!DeleteFile(lpFileName.c_str()))
+			if (!DeleteFile(fileName.c_str()))
 				return false;
 			else
 				return true;
 		}
 
-		bool changeFileName(std::string lpFileName, std::string lpNewFileName)
+		bool changeFileName(string fileName, string newFileName)
 		{
-			if (!MoveFileEx(lpFileName.c_str(), lpNewFileName.c_str(), MOVEFILE_COPY_ALLOWED))
+			if (!MoveFileEx(fileName.c_str(), newFileName.c_str(), MOVEFILE_COPY_ALLOWED))
 				return false;
 			else
 				return true;
 		}
 
-		bool copyDirectory(Directory* pDir, std::string copy_path)
+		bool copyDirectory(Directory* pDir, string copy_path)
 		{
 			if (!CreateDirectory(copy_path.c_str(), NULL))
 				return false;
@@ -166,15 +166,15 @@ namespace FileSystem
 				// Copying all files from current directory
 				for (File file : pDir->getFiles())
 				{
-					std::string filename = (pDir->getPath() + '\\' + file.name);
-					std::string copyFileName = (copy_path + "\\" + file.name);
+					string filename = (pDir->getPath() + '\\' + file.name);
+					string copyFileName = (copy_path + "\\" + file.name);
 
 					copyFile(filename.c_str(), copyFileName.c_str());
 				}
 
-				std::vector<std::string> subDirs = pDir->getDirs(); // List all subdirectories
+				vector<string> subDirs = pDir->getDirs(); // List all subdirectories
 
-				for (std::string dir : subDirs)
+				for (string dir : subDirs)
 				{
 					// Copying all directories except system dirs
 					if (!(dir == "." or dir == ".."))
@@ -190,7 +190,7 @@ namespace FileSystem
 
 		}
 
-		bool moveDirectory(Directory* pDir, std::string newPath)
+		bool moveDirectory(Directory* pDir, string newPath)
 		{
 			if (copyDirectory(pDir, newPath))
 				return false;
@@ -206,14 +206,14 @@ namespace FileSystem
 			// Deleting all files from current directory
 			for (File file : pDir->getFiles())
 			{
-				std::string filename = (pDir->getPath() + '\\' + file.name).c_str();
+				string filename = (pDir->getPath() + '\\' + file.name).c_str();
 
 				deleteFile(filename.c_str());
 			}
 
-			std::vector<std::string> subDirs = pDir->getDirs(); // List all subdirectories
+			vector<string> subDirs = pDir->getDirs(); // List all subdirectories
 
-			for (std::string dir : subDirs)
+			for (string dir : subDirs)
 			{
 				// Deleteing all directories except system dirs
 				if (!(dir == "." or dir == ".."))

@@ -12,9 +12,9 @@ private: // class data
 
 	HWND hListBox; // Handle of List-View Window
 
-	std::vector<std::string> columns; // Columns of List-View
+	vector<string> columns; // Columns of List-View
 
-	std::vector<std::vector<std::string>> listViewTab;
+	vector<vector<string>> listViewTab;
 
 	RECT area; // ListView area
 
@@ -48,7 +48,7 @@ public: // class public methods
 
 	void setDir(Directory& directory);
 
-	std::vector<std::string> getElement(unsigned index);
+	vector<string> getElement(unsigned index);
 
 	HWND getListHandle();
 
@@ -61,21 +61,16 @@ class Buttons
 {
 	typedef void (*buttonHandler)(FolderView*); // pointer to methods of Buttons class
 
-	friend void OpenHandler(FolderView*);
-	friend void CopyHandler(FolderView*);
-	friend void MoveHandler(FolderView*);
-	friend void DeleteHandler(FolderView*);
-
-private: // data
-
 	struct Button
 	{
 		HWND handle;
 		buttonHandler pFunction;
 	};
 
+private: // data
+
 	// structure of buttons handles and their handle functions 
-	std::vector<Button> buttons; 
+	vector<Button> buttons; 
 
 private:
 
@@ -89,9 +84,9 @@ public:
 
 };
 
-void OpenHandler(FolderView*);
-void CopyHandler(FolderView*);
-void MoveHandler(FolderView*);
-void DeleteHandler(FolderView*);
+static void OpenHandler(FolderView*);
+static void CopyHandler(FolderView*);
+static void MoveHandler(FolderView*);
+static void DeleteHandler(FolderView*);
 
 class FolderTree;

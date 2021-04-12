@@ -44,7 +44,7 @@ bool FolderView::InitListViewColumns()
 	int iCol = 0;
 
 	// Add the columns.
-	for (std::string column : this->columns)
+	for (string column : this->columns)
 	{
 		lvc.iSubItem = iCol;
 		lvc.pszText = (LPSTR)(column.c_str());
@@ -94,7 +94,7 @@ bool FolderView::InsertListViewItems() // TODO implement adding other info about
 void FolderView::FillListViewTab()
 {
 	// Adding directories to listViewTab
-	for (std::string subdir : this->currDir->getDirs())
+	for (string subdir : this->currDir->getDirs())
 	{
 		this->listViewTab.push_back({ subdir, "Folder", "" });
 	}
@@ -163,7 +163,7 @@ void FolderView::setDir(Directory& directory)
 	this->updateList();
 }
 
-std::vector<std::string> FolderView::getElement(unsigned index)
+vector<string> FolderView::getElement(unsigned index)
 {
 	return this->listViewTab[index];
 }
@@ -181,7 +181,7 @@ Directory* FolderView::getDir()
 // Updating the list of files and directories
 void FolderView::updateList()
 {
-
+	// TODO
 	this->currDir->Update(); // Updating current Directory
 
 	InsertListViewItems();
@@ -192,56 +192,36 @@ void FolderView::updateList()
 
 Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 {
-
-	HWND hButton = CreateWindow("button",
-		"Open",
+	// TODO implement relative placement of buttons
+	HWND hButton = CreateWindow("button", "Open",
 		WS_CHILD | WS_VISIBLE | WS_BORDER,
 		50, 100,
-		60,
-		20,
-		hParent,
-		(HMENU)NULL,
-		hInst,
-		NULL);
+		60, 20,
+		hParent, (HMENU)NULL, hInst, NULL);
 
 	this->buttons.push_back({ hButton, OpenHandler });
 
-	hButton = CreateWindow("button",
-		"Copy",
+	hButton = CreateWindow("button", "Copy",
 		WS_CHILD | WS_VISIBLE | WS_BORDER,
 		50, 200,
-		60,
-		20,
-		hParent,
-		(HMENU)NULL,
-		hInst,
-		NULL);
+		60, 20,
+		hParent, (HMENU)NULL, hInst, NULL);
 
 	this->buttons.push_back({ hButton, CopyHandler });
 
-	hButton = CreateWindow("button",
-		"Move",
+	hButton = CreateWindow("button", "Move",
 		WS_CHILD | WS_VISIBLE | WS_BORDER,
 		50, 300,
-		60,
-		20,
-		hParent,
-		(HMENU)NULL,
-		hInst,
-		NULL);
+		60, 20,
+		hParent, (HMENU)NULL, hInst, NULL);
 
 	// this->buttons.push_back({ hButton, MoveHandler });
 
-	hButton = CreateWindow("button",
-		"Delete",
+	hButton = CreateWindow("button", "Delete",
 		WS_CHILD | WS_VISIBLE | WS_BORDER,
 		50, 400,
-		60,
-		20,
-		hParent,
-		(HMENU)NULL,
-		hInst,
-		NULL);
+		60, 20,
+		hParent, (HMENU)NULL, hInst, NULL);
 
 	// this->buttons.push_back({ hButton, DeleteHandler });
 
@@ -268,18 +248,20 @@ void OpenHandler(FolderView* pFolderView)
 
 	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
-	if (id >= SendMessage(hList, LVM_GETITEMCOUNT, 0, 0))
+	if (id < 0)
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
 	else
 	{
-		std::vector<std::string> elem = pFolderView->getElement(id);
+		vector<string> elem = pFolderView->getElement(id);
 
-		std::string name = elem[0];
-		std::string type = elem[1];
+		string name = elem[0];
+		string type = elem[1];
 
 		if (type == "Folder")
 		{
-			// TODO implement opening of directory
+			/*
+			* TODO implement opening of directory
+			*/
 		}
 		else
 			Utilities::openFile(pFolderView->getDir()->getPath() + "\\" + name); // Opening of file
@@ -296,5 +278,29 @@ void MoveHandler(FolderView* pFolderView)
 void DeleteHandler(FolderView* pFolderView)
 {
 	// MessageBox(NULL, "WORK", "Delete", MB_OK);
+
+	HWND hList = pFolderView->getListHandle();
+
+	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+
+	if (id < 0)
+		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+	else
+	{
+		vector<string> elem = pFolderView->getElement(id);
+
+		string name = elem[0];
+		string type = elem[1];
+
+		string path = pFolderView->getDir()->getPath() + "\\" + name;
+
+		if (type == "Folder")
+		{
+			Utilities::deleteDirectory(&Directory(path, nullptr));
+			pFolderView->getDir()->Update();
+		}
+		else
+			Utilities::deleteFile(path); // Opening of file
+	}
 }
 //-----END OF BUTTONS'S METHODS-----//
