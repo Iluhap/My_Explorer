@@ -76,8 +76,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 
-	unsigned sizeX = round(GetSystemMetrics(SM_CXSCREEN) / 2);
-	unsigned sizeY = round(GetSystemMetrics(SM_CYSCREEN) / 2);
+	UINT sizeX = (UINT)round(GetSystemMetrics(SM_CXSCREEN) / 2);
+	UINT sizeY = (UINT)round(GetSystemMetrics(SM_CYSCREEN) / 2);
 
 	HWND hWnd;
 	hInst = hInstance; //зберігає дескриптор додатка в змінній hInst
@@ -145,14 +145,12 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 {
 	// TODO 
 
-	directory = new Directory("C:", nullptr);
+	directory = new Directory("C:\\Users\\Илья\\Desktop\\TEST", nullptr);
 
 	RECT rt;
 	GetClientRect(hWnd, &rt);
 
-	pFolderView = new FolderView(directory, rt);
-
-	pFolderView->Create(hWnd, hInst);
+	pFolderView = new FolderView(directory, rt, hWnd, hInst);
 
 	pButtons = new Buttons(hWnd, hInst);
 

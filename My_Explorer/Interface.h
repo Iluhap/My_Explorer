@@ -12,6 +12,9 @@ private: // class data
 
 	HWND hListBox; // Handle of List-View Window
 
+	HWND hwndParent;
+	HINSTANCE hInst;
+
 	vector<string> columns; // Columns of List-View
 
 	vector<vector<string>> listViewTab;
@@ -22,9 +25,7 @@ private: // class private methods
 
 	FolderView();
 
-	void updateList();
-
-	void CreateListView(HWND hwndParent, HINSTANCE hInst);
+	void CreateListView();
 
 	bool InsertListViewItems();
 
@@ -40,9 +41,11 @@ private: // class private methods
 
 public: // class public methods
 
-	FolderView(Directory* dir, const RECT& cRect);
+	FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINSTANCE hInst);
 
-	void Create(HWND hWmd, HINSTANCE hInst);
+	void Create();
+
+	void updateList();
 
 	void setListViewRect(const RECT& cRect);
 

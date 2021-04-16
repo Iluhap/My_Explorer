@@ -7,10 +7,12 @@
 FolderView::FolderView() :
 	currDir(nullptr),
 	hListBox(nullptr),
+	hwndParent(nullptr),
+	hInst(NULL),
 	columns({ "Name", "Type", "Date" }),
 	area({ 0,0,0,0 }) {}
 
-void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
+void FolderView::CreateListView()
 {
 	INITCOMMONCONTROLSEX icex;           // Structure for control initialization.
 	icex.dwICC = ICC_LISTVIEW_CLASSES;
@@ -23,9 +25,9 @@ void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
 		this->area.left, this->area.top,
 		(this->area.right - this->area.left),
 		(this->area.bottom - this->area.top),
-		hwndParent,
+		this->hwndParent,
 		(HMENU)NULL,
-		hInst,
+		this->hInst,
 		NULL);
 }
 
@@ -93,6 +95,9 @@ bool FolderView::InsertListViewItems() // TODO implement adding other info about
 
 void FolderView::FillListViewTab()
 {
+
+	this->listViewTab.clear();
+
 	// Adding directories to listViewTab
 	for (string subdir : this->currDir->getDirs())
 	{
@@ -130,25 +135,28 @@ void FolderView::rectTransform(RECT& cRect,
 
 //----------------------------------------------// 
 
-FolderView::FolderView(Directory* dir, const RECT& cRect) : FolderView()
+FolderView::FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINSTANCE hInst) : FolderView()
 {
 	this->currDir = dir;
+	this->hwndParent = hwndParent;
+	this->hInst = hInst;
 
 	RECT folderView = cRect;
 	rectTransform(folderView, 0.75, 0.95, 1, 0.9);
 	setListViewRect(folderView);
+
+	Create();
 }
 
-void FolderView::Create(HWND hWnd, HINSTANCE hInst)
+void FolderView::Create()
 {
-	CreateListView(hWnd, hInst);
+	CreateListView();
 
 	InitListViewColumns();
 
 	FillListViewTab();
 
 	InsertListViewItems();
-
 }
 
 void FolderView::setListViewRect(const RECT& rect)
@@ -184,8 +192,11 @@ void FolderView::updateList()
 	// TODO
 	this->currDir->Update(); // Updating current Directory
 
-	InsertListViewItems();
+	SendMessage(this->hListBox, LVM_DELETEALLITEMS, 0, 0);
 
+	FillListViewTab();
+
+	InsertListViewItems();
 }
 
 //-----BUTTONS'S METHODS-----//
@@ -215,7 +226,7 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 		60, 20,
 		hParent, (HMENU)NULL, hInst, NULL);
 
-	// this->buttons.push_back({ hButton, MoveHandler });
+	this->buttons.push_back({ hButton, MoveHandler });
 
 	hButton = CreateWindow("button", "Delete",
 		WS_CHILD | WS_VISIBLE | WS_BORDER,
@@ -223,7 +234,7 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 		60, 20,
 		hParent, (HMENU)NULL, hInst, NULL);
 
-	// this->buttons.push_back({ hButton, DeleteHandler });
+	this->buttons.push_back({ hButton, DeleteHandler });
 
 }
 
@@ -231,7 +242,7 @@ void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
 {
 	HWND hPressedButton = (HWND)lParam;
 
-	for (auto button : this->buttons)
+	for (Button button : this->buttons)
 	{
 		if (button.handle == hPressedButton)
 		{
@@ -277,8 +288,6 @@ void MoveHandler(FolderView* pFolderView)
 }
 void DeleteHandler(FolderView* pFolderView)
 {
-	// MessageBox(NULL, "WORK", "Delete", MB_OK);
-
 	HWND hList = pFolderView->getListHandle();
 
 	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
@@ -293,14 +302,15 @@ void DeleteHandler(FolderView* pFolderView)
 		string type = elem[1];
 
 		string path = pFolderView->getDir()->getPath() + "\\" + name;
-
+		
+		Directory tmpDir = Directory(path, nullptr);
+		
 		if (type == "Folder")
-		{
-			Utilities::deleteDirectory(&Directory(path, nullptr));
-			pFolderView->getDir()->Update();
-		}
+			Utilities::deleteDirectory(&tmpDir);
 		else
-			Utilities::deleteFile(path); // Opening of file
+			Utilities::deleteFile(path);
+		
+		pFolderView->updateList(); // Updating of FolderView
 	}
 }
 //-----END OF BUTTONS'S METHODS-----//

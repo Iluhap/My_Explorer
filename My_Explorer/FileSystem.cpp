@@ -17,6 +17,9 @@ namespace FileSystem
 
 	void Directory::find_files()
 	{
+		this->files.clear();
+		this->subDirectories.clear();
+
 		string path = this->getPath();
 
 		WIN32_FIND_DATA data;
@@ -203,6 +206,9 @@ namespace FileSystem
 
 		bool deleteDirectory(Directory* pDir)
 		{
+			if (pDir->getName() == "." or pDir->getName() == "..")
+				return false;
+
 			// Deleting all files from current directory
 			for (File file : pDir->getFiles())
 			{
@@ -229,9 +235,8 @@ namespace FileSystem
 			if (!RemoveDirectory(pDir->getPath().c_str()))
 				return false;
 			else
-				return 0;
+				return true;
 		}
-
 
 		//---------END OF METHODS---------//	
 	}
