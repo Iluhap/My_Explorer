@@ -116,6 +116,23 @@ namespace FileSystem
 			return drives;
 		}
 
+		bool endWith(string str, string subStr) 
+			{
+				string::size_type idx;
+
+				string sub;
+
+				idx = str.rfind('\\');
+
+				if (idx != string::npos)
+					sub = str.substr(idx + 1);
+				
+				if (sub == subStr)
+					return true;
+				else
+					return false;
+			}
+
 		bool openFile(string fileName)
 		{
 			STARTUPINFO si;
@@ -206,7 +223,7 @@ namespace FileSystem
 
 		bool deleteDirectory(Directory* pDir)
 		{
-			if (pDir->getName() == "." or pDir->getName() == "..")
+			if (endWith(pDir->getName(), ".") or endWith(pDir->getName(), ".."))
 				return false;
 
 			// Deleting all files from current directory
