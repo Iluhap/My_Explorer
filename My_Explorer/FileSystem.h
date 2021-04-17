@@ -54,13 +54,13 @@ namespace FileSystem
 
 		// Getters declaration
 
-		vector<string> getDirs();
-		vector<File> getFiles();
+		vector<string> getDirs() const;
+		vector<File> getFiles() const;
 
-		File getFileInfo(string filename);
+		File getFileInfo(string filename) const;
 
-		string getName();
-		string getPath();
+		string getName() const;
+		string getPath() const;
 
 		// End of getters declaration
 	};

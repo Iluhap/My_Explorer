@@ -33,11 +33,13 @@ private: // class private methods
 
 	void FillListViewTab();
 
-	void rectTransform(RECT& cRect,
+	void rectTransform(
+		RECT& cRect,
 		double left_scale,
 		double top_scale,
 		double right_scale,
-		double bottom_scale);
+		double bottom_scale
+	);
 
 public: // class public methods
 
@@ -51,18 +53,18 @@ public: // class public methods
 
 	void setDir(Directory& directory);
 
-	vector<string> getElement(unsigned index);
+	vector<string> getElement(unsigned index) const;
 
-	HWND getListHandle();
+	HWND getListHandle() const;
 
-	Directory* getDir();
+	Directory* getDir() const;
 
 };
 
 
 class Buttons
 {
-	typedef void (*buttonHandler)(FolderView*); // pointer to methods of Buttons class
+	typedef void (* buttonHandler)(FolderView*); // pointer to methods of Buttons class
 
 	struct Button
 	{
@@ -85,11 +87,11 @@ public:
 
 	void Handler(LPARAM lParam, FolderView* pFolderView);
 
-};
+	static void OpenHandler(FolderView*);
+	static void CopyHandler(FolderView*);
+	static void MoveHandler(FolderView*);
+	static void DeleteHandler(FolderView*);
 
-static void OpenHandler(FolderView*);
-static void CopyHandler(FolderView*);
-static void MoveHandler(FolderView*);
-static void DeleteHandler(FolderView*);
+};
 
 class FolderTree;

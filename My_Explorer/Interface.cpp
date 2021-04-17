@@ -115,11 +115,13 @@ void FolderView::FillListViewTab()
 	}
 }
 
-void FolderView::rectTransform(RECT& cRect,
+void FolderView::rectTransform(
+	RECT& cRect,
 	double left_scale,
 	double top_scale,
 	double right_scale,
-	double bottom_scale)
+	double bottom_scale
+)
 {
 	size_t xSize = (cRect.right - cRect.left);
 	size_t ySize = (cRect.bottom - cRect.top);
@@ -171,20 +173,11 @@ void FolderView::setDir(Directory& directory)
 	this->updateList();
 }
 
-vector<string> FolderView::getElement(unsigned index)
-{
-	return this->listViewTab[index];
-}
+vector<string> FolderView::getElement(unsigned index) const { return this->listViewTab[index]; }
 
-HWND FolderView::getListHandle()
-{
-	return this->hListBox;
-}
+HWND FolderView::getListHandle() const { return this->hListBox; }
 
-Directory* FolderView::getDir()
-{
-	return this->currDir;
-}
+Directory* FolderView::getDir() const { return this->currDir; }
 
 // Updating the list of files and directories
 void FolderView::updateList()
@@ -253,7 +246,7 @@ void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
 
 
 // TODO implement handle mathods
-void OpenHandler(FolderView* pFolderView)
+void Buttons::OpenHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
@@ -278,15 +271,15 @@ void OpenHandler(FolderView* pFolderView)
 			Utilities::openFile(pFolderView->getDir()->getPath() + "\\" + name); // Opening of file
 	}
 }
-void CopyHandler(FolderView* pFolderView)
+void Buttons::CopyHandler(FolderView* pFolderView)
 {
 	// MessageBox(NULL, "WORK", "Copy", MB_OK);
 }
-void MoveHandler(FolderView* pFolderView)
+void Buttons::MoveHandler(FolderView* pFolderView)
 {
 	// MessageBox(NULL, "WORK", "Move", MB_OK);
 }
-void DeleteHandler(FolderView* pFolderView)
+void Buttons::DeleteHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
@@ -302,14 +295,14 @@ void DeleteHandler(FolderView* pFolderView)
 		string type = elem[1];
 
 		string path = pFolderView->getDir()->getPath() + "\\" + name;
-		
+
 		Directory tmpDir = Directory(path, nullptr);
-		
+
 		if (type == "Folder")
 			Utilities::deleteDirectory(&tmpDir);
 		else
 			Utilities::deleteFile(path);
-		
+
 		pFolderView->updateList(); // Updating of FolderView
 	}
 }

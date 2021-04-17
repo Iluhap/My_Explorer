@@ -40,10 +40,10 @@ namespace FileSystem
 
 	//----GETTERS-----//
 
-	string Directory::getName() { return this->name; }
-	vector<File> Directory::getFiles() { return this->files; }
-	vector<string> Directory::getDirs() { return this->subDirectories; }
-	File Directory::getFileInfo(string filename)
+	string Directory::getName() const { return this->name; }
+	vector<File> Directory::getFiles() const { return this->files; }
+	vector<string> Directory::getDirs() const { return this->subDirectories; }
+	File Directory::getFileInfo(string filename) const 
 	{
 		auto file = find_if(this->files.begin(), this->files.end(),
 			[filename](const File& elem)
@@ -56,7 +56,7 @@ namespace FileSystem
 		);
 		return *file;
 	}
-	string Directory::getPath()
+	string Directory::getPath() const
 	{
 		if (this->parent == nullptr)
 			return this->name;
