@@ -145,7 +145,7 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 {
 	// TODO 
 
-	directory = new Directory("C:\\Users\\Илья\\Desktop\\TEST", nullptr);
+	directory = new Directory("D:\\TEST", nullptr);
 
 	RECT rt;
 	GetClientRect(hWnd, &rt);

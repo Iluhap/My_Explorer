@@ -77,6 +77,8 @@ private: // data
 	// structure of buttons handles and their handle functions 
 	vector<Button> buttons; 
 
+	static string edit_control_text;
+
 private:
 
 	Buttons();
@@ -87,6 +89,9 @@ public:
 
 	void Handler(LPARAM lParam, FolderView* pFolderView);
 
+	static LRESULT CALLBACK DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+
+	//-----Hadler functions for buttons-----//
 	static void OpenHandler(FolderView*);
 	static void CopyHandler(FolderView*);
 	static void MoveHandler(FolderView*);

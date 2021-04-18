@@ -71,6 +71,53 @@ END
 // remains consistent on all systems.
 IDI_ICON                ICON                    "icon1.ico"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG DIALOGEX 0, 0, 227, 96
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "ОК",IDOK,43,57,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,131,57,50,14
+    EDITTEXT        IDC_EDIT1,43,35,138,14,ES_AUTOHSCROLL
+    LTEXT           "Enter full name of result file/direcotory",IDC_STATIC,45,23,138,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 220
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 #endif    // Русский (Россия) resources
 /////////////////////////////////////////////////////////////////////////////
 

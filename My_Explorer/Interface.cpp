@@ -3,6 +3,10 @@
 #pragma comment(lib, "comctl32.lib")
 #include "commctrl.h"
 
+#include "resource.h"
+
+
+//-----FolderView's METHODS-----//
 
 FolderView::FolderView() :
 	currDir(nullptr),
@@ -192,7 +196,12 @@ void FolderView::updateList()
 	InsertListViewItems();
 }
 
+//-----END OF FolderView's METHODS-----//
+
+
 //-----BUTTONS'S METHODS-----//
+
+string Buttons::edit_control_text = ""; // STATIC VARIABLE OF BUTTONS
 
 Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 {
@@ -244,6 +253,40 @@ void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
 	}
 }
 
+LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	HWND hEdit;
+	CHAR s_text[256] = { 0 };
+
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return TRUE;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+
+			hEdit = GetDlgItem(hDlg, IDC_EDIT1);
+
+			SendMessage(hEdit, WM_GETTEXT, (WPARAM)255, (LPARAM)s_text);
+
+			Buttons::edit_control_text = s_text;
+
+			MessageBox(hDlg, s_text, "Output", MB_OK);
+
+			EndDialog(hDlg, LOWORD(wParam));
+
+			return TRUE;
+
+		case IDCANCEL:
+
+			EndDialog(hDlg, LOWORD(wParam));
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
 
 // TODO implement handle mathods
 void Buttons::OpenHandler(FolderView* pFolderView)
@@ -273,11 +316,55 @@ void Buttons::OpenHandler(FolderView* pFolderView)
 }
 void Buttons::CopyHandler(FolderView* pFolderView)
 {
-	// MessageBox(NULL, "WORK", "Copy", MB_OK);
+	HWND hList = pFolderView->getListHandle();
+
+	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+
+	if (id < 0)
+		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+	else
+	{
+		vector<string> elem = pFolderView->getElement(id);
+
+		string name = elem[0];
+		string type = elem[1];
+
+		DialogBox(pFolderView->hInst, MAKEINTRESOURCE(IDD_DIALOG), pFolderView->hwndParent, (DLGPROC)&Buttons::DlgFunc);
+
+		if (type == "Folder")
+			Utilities::copyDirectory(pFolderView->getDir(), Buttons::edit_control_text);
+		else
+			Utilities::copyFile(pFolderView->getDir()->getPath() + "\\" + name, Buttons::edit_control_text); 
+
+		Buttons::edit_control_text = "";
+		pFolderView->updateList();
+	}
 }
 void Buttons::MoveHandler(FolderView* pFolderView)
 {
-	// MessageBox(NULL, "WORK", "Move", MB_OK);
+	HWND hList = pFolderView->getListHandle();
+
+	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+
+	if (id < 0)
+		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+	else
+	{
+		vector<string> elem = pFolderView->getElement(id);
+
+		string name = elem[0];
+		string type = elem[1];
+
+		DialogBox(pFolderView->hInst, MAKEINTRESOURCE(IDD_DIALOG), pFolderView->hwndParent, (DLGPROC)&Buttons::DlgFunc);
+
+		if (type == "Folder")
+			Utilities::moveDirectory(pFolderView->getDir(), Buttons::edit_control_text);
+		else
+			Utilities::changeFileName(pFolderView->getDir()->getPath() + "\\" + name, Buttons::edit_control_text);
+
+		Buttons::edit_control_text = "";
+		pFolderView->updateList();
+	}
 }
 void Buttons::DeleteHandler(FolderView* pFolderView)
 {
