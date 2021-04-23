@@ -71,6 +71,7 @@ namespace FileSystem
 	File::File(const WIN32_FIND_DATA& data)
 	{
 		this->name = data.cFileName; // Saving name of file
+		this->size = to_string(data.nFileSizeLow) + " bytes";
 
 		FileTimeToSystemTime(&data.ftLastWriteTime, &this->time); // Saving time
 

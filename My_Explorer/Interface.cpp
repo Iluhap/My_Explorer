@@ -13,7 +13,7 @@ FolderView::FolderView() :
 	hListBox(nullptr),
 	hwndParent(nullptr),
 	hInst(NULL),
-	columns({ "Name", "Type", "Date" }),
+	columns({ "Name", "Type", "Date" , "Size"}),
 	area({ 0,0,0,0 }) {}
 
 void FolderView::CreateListView()
@@ -115,7 +115,7 @@ void FolderView::FillListViewTab()
 
 		sprintf_s(date, "%d.%d.%d", file.time.wDay, file.time.wMonth, file.time.wYear);
 
-		this->listViewTab.push_back({ file.name, file.extension, date });
+		this->listViewTab.push_back({ file.name, file.extension, date, file.size });
 	}
 }
 
@@ -288,14 +288,13 @@ LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 }
 
-// TODO implement handle mathods
 void Buttons::OpenHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
 	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
-	if (id < 0)
+	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
 	else
 	{

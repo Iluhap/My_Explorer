@@ -15,6 +15,8 @@ namespace FileSystem
 	public:
 		string name;
 		string extension;
+		string size;
+
 
 		SYSTEMTIME time;
 
