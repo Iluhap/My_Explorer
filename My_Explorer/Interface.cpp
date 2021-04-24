@@ -203,6 +203,41 @@ void FolderView::updateList()
 
 string Buttons::edit_control_text = ""; // STATIC VARIABLE OF BUTTONS
 
+LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	HWND hEdit;
+	CHAR s_text[256] = { 0 };
+
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return TRUE;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+
+			hEdit = GetDlgItem(hDlg, IDC_EDIT1);
+
+			SendMessage(hEdit, WM_GETTEXT, (WPARAM)255, (LPARAM)s_text);
+
+			Buttons::edit_control_text = s_text;
+
+			MessageBox(hDlg, s_text, "Output", MB_OK);
+
+			EndDialog(hDlg, LOWORD(wParam));
+
+			return TRUE;
+
+		case IDCANCEL:
+
+			EndDialog(hDlg, LOWORD(wParam));
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 {
 	// TODO implement relative placement of buttons
@@ -253,41 +288,6 @@ void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
 	}
 }
 
-LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	HWND hEdit;
-	CHAR s_text[256] = { 0 };
-
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return TRUE;
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDOK:
-
-			hEdit = GetDlgItem(hDlg, IDC_EDIT1);
-
-			SendMessage(hEdit, WM_GETTEXT, (WPARAM)255, (LPARAM)s_text);
-
-			Buttons::edit_control_text = s_text;
-
-			MessageBox(hDlg, s_text, "Output", MB_OK);
-
-			EndDialog(hDlg, LOWORD(wParam));
-
-			return TRUE;
-
-		case IDCANCEL:
-
-			EndDialog(hDlg, LOWORD(wParam));
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
 void Buttons::OpenHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
@@ -319,7 +319,7 @@ void Buttons::CopyHandler(FolderView* pFolderView)
 
 	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
-	if (id < 0)
+	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
 	else
 	{
@@ -345,7 +345,7 @@ void Buttons::MoveHandler(FolderView* pFolderView)
 
 	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
-	if (id < 0)
+	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
 	else
 	{
@@ -371,7 +371,7 @@ void Buttons::DeleteHandler(FolderView* pFolderView)
 
 	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
-	if (id < 0)
+	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
 	else
 	{

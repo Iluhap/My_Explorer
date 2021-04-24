@@ -50,13 +50,10 @@ public: // class public methods
 	void updateList();
 
 	void setListViewRect(const RECT& cRect);
-
 	void setDir(Directory& directory);
 
 	vector<string> getElement(unsigned index) const;
-
 	HWND getListHandle() const;
-
 	Directory* getDir() const;
 
 };
