@@ -12,8 +12,6 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void InitComponents(HWND hWnd, HINSTANCE hInst);
 void ReleaseComponents();
 
-void WM_COMMAND_Handler(LPARAM lParam);
-
 //--- Global variables ---//
 
 HINSTANCE hInst; // Program descriptor
@@ -23,8 +21,6 @@ LPCTSTR szTitle = "MyExplorer";
 FolderView* pFolderView;
 
 Directory* directory;
-
-FolderTree* pFolderTree;
 
 Buttons* pButtons;
 
@@ -64,7 +60,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance = hInstance; //дескриптор програми
 	wcex.hIcon = LoadIcon(NULL, IDI_WINLOGO); //визначення іконки
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW); //визначення курсору
-	wcex.hbrBackground = GetSysColorBrush(COLOR_WINDOW); //установка фону
+	wcex.hbrBackground = GetSysColorBrush(COLOR_WINDOW + 1); //установка фону
 	wcex.lpszMenuName = NULL; //визначення меню
 	wcex.lpszClassName = szWindowClass; //ім’я класу
 	wcex.hIconSm = NULL;
@@ -113,27 +109,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_CREATE: // Повідомлення приходить при створенні вікна
-
+	{
 		InitComponents(hWnd, hInst);
 
 		break;
+	}
 	case WM_PAINT: // Перемалювати вікно
-		hdc = BeginPaint(hWnd, &ps); // Почати графічний вивід
+	{	hdc = BeginPaint(hWnd, &ps); // Почати графічний вивід
 		GetClientRect(hWnd, &rt); // Область вікна для малювання
 
 		EndPaint(hWnd, &ps); // Закінчити графічний вивід
 		break;
-
+	}
 	case WM_COMMAND:
+	{
 		pButtons->Handler(lParam, pFolderView);
 		break;
-
+	}
 	case WM_DESTROY: // Завершення роботи
-
+	{
 		ReleaseComponents();
 
 		PostQuitMessage(0);
 		break;
+	}
 	default:
 		// Обробка повідомлень, які не оброблені користувачем
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -145,7 +144,7 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 {
 	// TODO 
 
-	directory = new Directory("D:\\TEST", nullptr);
+	directory = new Directory("C:\\Users\\Илья\\Desktop\\TEST", nullptr);
 
 	RECT rt;
 	GetClientRect(hWnd, &rt);
