@@ -119,25 +119,6 @@ void FolderView::FillListViewTab()
 	}
 }
 
-void FolderView::rectTransform(
-	RECT& cRect,
-	double left_scale,
-	double top_scale,
-	double right_scale,
-	double bottom_scale
-)
-{
-	size_t xSize = (cRect.right - cRect.left);
-	size_t ySize = (cRect.bottom - cRect.top);
-
-	cRect =
-	{
-		(LONG)round(cRect.left + xSize * (1 - left_scale)),
-		(LONG)round(cRect.top + ySize * (1 - top_scale)),
-		(LONG)round(cRect.right - (xSize * (1 - right_scale))),
-		(LONG)round(cRect.bottom - (ySize * (1 - bottom_scale)))
-	};
-}
 
 //----------------------------------------------// 
 
@@ -148,7 +129,7 @@ FolderView::FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINST
 	this->hInst = hInst;
 
 	RECT folderView = cRect;
-	rectTransform(folderView, 0.75, 0.95, 1, 0.9);
+	Utilities::rectTransform(folderView, 0.75, 0.95, 1, 0.9);
 	setListViewRect(folderView);
 
 	Create();
@@ -240,39 +221,24 @@ LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 {
-	// TODO implement relative placement of buttons
-	HWND hButton = CreateWindow("button", "Open",
-		WS_CHILD | WS_VISIBLE | WS_BORDER,
-		50, 100,
-		60, 20,
-		hParent, (HMENU)NULL, hInst, NULL);
+	vector<string> names = {"Open", "Copy", "Move", "Delete"}; // Names of buttons
+	vector<buttonHandler> functions = { OpenHandler , CopyHandler, MoveHandler, DeleteHandler}; // Handlers functions for buttons
 
-	this->buttons.push_back({ hButton, OpenHandler });
+	RECT rt;
+	GetClientRect(hParent, &rt);
+	Utilities::rectTransform(rt, 0.75, 0.1, 1, 1); // Preparing area for buttons
 
-	hButton = CreateWindow("button", "Copy",
-		WS_CHILD | WS_VISIBLE | WS_BORDER,
-		50, 200,
-		60, 20,
-		hParent, (HMENU)NULL, hInst, NULL);
+	for (size_t i = 0; i < names.size(); i++)
+	{
+		int left = rt.left + (i) * (rt.right - rt.left) / names.size(); // Calculating position for current button
 
-	this->buttons.push_back({ hButton, CopyHandler });
-
-	hButton = CreateWindow("button", "Move",
-		WS_CHILD | WS_VISIBLE | WS_BORDER,
-		50, 300,
-		60, 20,
-		hParent, (HMENU)NULL, hInst, NULL);
-
-	this->buttons.push_back({ hButton, MoveHandler });
-
-	hButton = CreateWindow("button", "Delete",
-		WS_CHILD | WS_VISIBLE | WS_BORDER,
-		50, 400,
-		60, 20,
-		hParent, (HMENU)NULL, hInst, NULL);
-
-	this->buttons.push_back({ hButton, DeleteHandler });
-
+		HWND hButton = CreateWindow("button", names[i].c_str(),
+			WS_CHILD | WS_VISIBLE | WS_BORDER,
+			left, rt.top + 10,
+			60, 20,
+			hParent, (HMENU)NULL, hInst, NULL);
+		this->buttons.push_back({ hButton, functions[i]});
+	}
 }
 
 void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
@@ -282,9 +248,7 @@ void Buttons::Handler(LPARAM lParam, FolderView* pFolderView)
 	for (Button button : this->buttons)
 	{
 		if (button.handle == hPressedButton)
-		{
 			button.pFunction(pFolderView);
-		}
 	}
 }
 

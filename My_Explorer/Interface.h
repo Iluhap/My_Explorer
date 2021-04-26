@@ -33,14 +33,6 @@ private: // class private methods
 
 	void FillListViewTab();
 
-	void rectTransform(
-		RECT& cRect,
-		double left_scale,
-		double top_scale,
-		double right_scale,
-		double bottom_scale
-	);
-
 public: // class public methods
 
 	FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINSTANCE hInst);
@@ -96,4 +88,14 @@ public:
 
 };
 
-class FolderTree;
+class FolderTree
+{
+private:
+	vector<Directory> directories;
+
+private:
+	FolderTree();
+
+public:
+
+};

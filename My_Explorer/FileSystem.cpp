@@ -71,7 +71,7 @@ namespace FileSystem
 	File::File(const WIN32_FIND_DATA& data)
 	{
 		this->name = data.cFileName; // Saving name of file
-		this->size = to_string(data.nFileSizeLow) + " bytes";
+		this->size = to_string((data.nFileSizeLow / 1000) ? data.nFileSizeLow / 1000 : 1) + " Kbyte";
 
 		FileTimeToSystemTime(&data.ftLastWriteTime, &this->time); // Saving time
 
@@ -116,6 +116,27 @@ namespace FileSystem
 			}
 			return drives;
 		}
+
+		void Utilities::rectTransform(
+			RECT& cRect,
+			double left_scale,
+			double top_scale,
+			double right_scale,
+			double bottom_scale
+		)
+		{
+			size_t xSize = (cRect.right - cRect.left);
+			size_t ySize = (cRect.bottom - cRect.top);
+
+			cRect =
+			{
+				(LONG)round(cRect.left + xSize * (1 - left_scale)),
+				(LONG)round(cRect.top + ySize * (1 - top_scale)),
+				(LONG)round(cRect.right - (xSize * (1 - right_scale))),
+				(LONG)round(cRect.bottom - (ySize * (1 - bottom_scale)))
+			};
+		}
+
 
 		bool endWith(string str, string subStr) 
 			{

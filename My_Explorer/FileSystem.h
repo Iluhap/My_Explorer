@@ -75,9 +75,16 @@ namespace FileSystem
 		// Returns a vector of names of logical drives on current machine
 		vector<string> listDrives();
 
+		void rectTransform(
+			RECT& cRect,
+			double left_scale,
+			double top_scale,
+			double right_scale,
+			double bottom_scale
+		);
+
 		bool endWith(string str, string subStr);
 		
-
 		//--- Methods below returns non-zero value if falure acquired ---//
 
 		bool openFile(string fileName);
