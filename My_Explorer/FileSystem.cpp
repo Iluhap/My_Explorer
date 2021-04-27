@@ -96,17 +96,23 @@ namespace FileSystem
 
 		vector<string> Utilities::listDrives()
 		{
-			char buffer[128];
 
-			GetLogicalDriveStrings(128, buffer);
+			const UINT buff_size = 128;
+
+			char buffer[buff_size];
+
+			GetLogicalDriveStrings(buff_size, buffer);
 
 			vector<string> drives;
 
 			string acum;
 
-			for (size_t i = 0; i < 40; i++)
+			for (size_t i = 0; i < buff_size; i++)
 			{
-				if (buffer[i] == '\0' or buffer[i] == '\\')
+				if (buffer[i] == '\\')
+					continue;
+
+				if (buffer[i] == '\0' and !acum.empty())
 				{
 					drives.push_back(acum);
 					acum = "";
