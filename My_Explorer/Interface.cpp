@@ -16,7 +16,7 @@ FolderView::FolderView() :
 	columns({ "Name", "Type", "Date" , "Size"}),
 	area({ 0,0,0,0 }) {}
 
-void FolderView::CreateListView()
+void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
 {
 	INITCOMMONCONTROLSEX icex;           // Structure for control initialization.
 	icex.dwICC = ICC_LISTVIEW_CLASSES;
@@ -29,9 +29,9 @@ void FolderView::CreateListView()
 		this->area.left, this->area.top,
 		(this->area.right - this->area.left),
 		(this->area.bottom - this->area.top),
-		this->hwndParent,
+		hwndParent,
 		(HMENU)NULL,
-		this->hInst,
+		hInst,
 		NULL);
 }
 
@@ -113,12 +113,11 @@ void FolderView::FillListViewTab()
 	{
 		char date[100];
 
-		sprintf_s(date, "%d.%d.%d", file.time.wDay, file.time.wMonth, file.time.wYear);
+		sprintf_s(date, "%02d.%02d.%04d", file.time.wDay, file.time.wMonth, file.time.wYear);
 
 		this->listViewTab.push_back({ file.name, file.extension, date, file.size });
 	}
 }
-
 
 //----------------------------------------------// 
 
@@ -132,12 +131,7 @@ FolderView::FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINST
 	Utilities::rectTransform(folderView, 0.75, 0.95, 1, 0.9);
 	setListViewRect(folderView);
 
-	Create();
-}
-
-void FolderView::Create()
-{
-	CreateListView();
+	CreateListView(hwndParent, hInst);
 
 	InitListViewColumns();
 
@@ -167,7 +161,6 @@ Directory* FolderView::getDir() const { return this->currDir; }
 // Updating the list of files and directories
 void FolderView::updateList()
 {
-	// TODO
 	this->currDir->Update(); // Updating current Directory
 
 	SendMessage(this->hListBox, LVM_DELETEALLITEMS, 0, 0);
@@ -179,6 +172,72 @@ void FolderView::updateList()
 
 //-----END OF FolderView's METHODS-----//
 
+
+//-----FolderView's METHODS-----//
+
+// Private methods
+
+void FolderTree::CreateTreeView(HWND hWnd, HINSTANCE hInst)
+{
+	// Ensure that the common control DLL is loaded. 
+	INITCOMMONCONTROLSEX icex;           // Structure for control initialization.
+	icex.dwICC = ICC_LISTVIEW_CLASSES;
+	InitCommonControlsEx(&icex);
+
+	// Get the dimensions of the parent window's client area, and create 
+	// the tree-view control. 
+
+	this->hTreeView = CreateWindow(WC_TREEVIEW,
+		TEXT("Tree View"),
+		WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES,
+		this->area.left, // X
+		this->area.top, // Y
+		this->area.right - this->area.left, // Width
+		this->area.bottom - this->area.top, // Height
+		hWnd,
+		(HMENU)NULL,
+		hInst,
+		NULL);
+}
+
+// End of private methods
+
+FolderTree::FolderTree()
+	:
+	hTreeView(nullptr),
+	hwndParent(nullptr),
+	hInst(NULL),
+	area({0,0,0,0})
+{
+	vector<string> drives = Utilities::listDrives();
+
+	for (string drive_name : drives)
+	{
+		this->directories.push_back(Directory(drive_name, nullptr));
+	}
+}
+
+FolderTree::FolderTree(HWND hWnd, HINSTANCE hInst) : FolderTree()
+{
+	this->hwndParent = hWnd;
+	this->hInst = hInst;
+
+	GetClientRect(hWnd, &this->area);
+	Utilities::rectTransform(this->area, 1, 0.95, 0.25, 0.9);
+
+	CreateTreeView(hWnd, hInst);
+}
+
+FolderTree::~FolderTree()
+{
+}
+
+void FolderTree::setRect(const RECT& cRect)
+{
+	Utilities::rectTransform(this->area, 0, 0, 0.25, 0);
+}
+
+//-----END OF FolderTree's METHODS-----//
 
 //-----BUTTONS'S METHODS-----//
 
@@ -226,16 +285,16 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 
 	RECT rt;
 	GetClientRect(hParent, &rt);
-	Utilities::rectTransform(rt, 0.75, 0.1, 1, 1); // Preparing area for buttons
+	Utilities::rectTransform(rt, 0.70, 0.1, 1, 1); // Preparing area for buttons
 
 	for (size_t i = 0; i < names.size(); i++)
 	{
-		int left = rt.left + (i) * (rt.right - rt.left) / names.size(); // Calculating position for current button
+		size_t left = rt.left + (i) * (rt.right - rt.left) / names.size(); // Calculating position for current button
 
 		HWND hButton = CreateWindow("button", names[i].c_str(),
 			WS_CHILD | WS_VISIBLE | WS_BORDER,
 			left, rt.top + 10,
-			60, 20,
+			70,25,
 			hParent, (HMENU)NULL, hInst, NULL);
 		this->buttons.push_back({ hButton, functions[i]});
 	}
@@ -256,7 +315,7 @@ void Buttons::OpenHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
-	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
@@ -281,7 +340,7 @@ void Buttons::CopyHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
-	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
@@ -307,7 +366,7 @@ void Buttons::MoveHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
-	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
@@ -333,7 +392,7 @@ void Buttons::DeleteHandler(FolderView* pFolderView)
 {
 	HWND hList = pFolderView->getListHandle();
 
-	unsigned id = SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
 		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
@@ -356,4 +415,5 @@ void Buttons::DeleteHandler(FolderView* pFolderView)
 		pFolderView->updateList(); // Updating of FolderView
 	}
 }
+
 //-----END OF BUTTONS'S METHODS-----//

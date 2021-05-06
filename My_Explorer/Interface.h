@@ -25,7 +25,7 @@ private: // class private methods
 
 	FolderView();
 
-	void CreateListView();
+	void CreateListView(HWND hwndParent, HINSTANCE hInst);
 
 	bool InsertListViewItems();
 
@@ -37,8 +37,6 @@ public: // class public methods
 
 	FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINSTANCE hInst);
 
-	void Create();
-
 	void updateList();
 
 	void setListViewRect(const RECT& cRect);
@@ -47,6 +45,34 @@ public: // class public methods
 	vector<string> getElement(unsigned index) const;
 	HWND getListHandle() const;
 	Directory* getDir() const;
+
+};
+
+
+class FolderTree
+{
+private:
+
+	HWND hTreeView;
+
+	vector<Directory> directories;
+
+	HWND hwndParent;
+	HINSTANCE hInst;
+
+	RECT area; // TreeView area
+
+private:
+	FolderTree();
+
+	void CreateTreeView(HWND hWnd, HINSTANCE hInst);
+
+public:
+
+	FolderTree(HWND hWnd, HINSTANCE hInst);
+	~FolderTree();
+
+	void setRect(const RECT&);
 
 };
 
@@ -85,17 +111,5 @@ public:
 	static void CopyHandler(FolderView*);
 	static void MoveHandler(FolderView*);
 	static void DeleteHandler(FolderView*);
-
-};
-
-class FolderTree
-{
-private:
-	vector<Directory> directories;
-
-private:
-	FolderTree();
-
-public:
 
 };
