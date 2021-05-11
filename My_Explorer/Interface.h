@@ -1,4 +1,13 @@
+#pragma once
+
 #include "FileSystem.h"
+
+#pragma comment(lib, "comctl32.lib")
+#include "commctrl.h"
+
+#include "resource.h"
+
+#include <map>
 
 using namespace FileSystem;
 
@@ -39,7 +48,7 @@ public: // class public methods
 
 	void updateList();
 
-	void setListViewRect(const RECT& cRect);
+	void setRect(const RECT& cRect);
 	void setDir(Directory& directory);
 
 	vector<string> getElement(unsigned index) const;
@@ -54,18 +63,21 @@ class FolderTree
 private:
 
 	HWND hTreeView;
-
-	vector<Directory> directories;
-
 	HWND hwndParent;
 	HINSTANCE hInst;
 
 	RECT area; // TreeView area
 
+	vector<Directory> drives;
+
+	std::map<HTREEITEM, Directory> treeItems;
+
 private:
 	FolderTree();
 
 	void CreateTreeView(HWND hWnd, HINSTANCE hInst);
+	void AddItemToTree(LPTSTR lpszItem, int nLevel);
+	BOOL InitTreeViewItems();
 
 public:
 
@@ -79,7 +91,7 @@ public:
 
 class Buttons
 {
-	typedef void (* buttonHandler)(FolderView*); // pointer to methods of Buttons class
+	typedef void (*buttonHandler)(FolderView*); // pointer to methods of Buttons class
 
 	struct Button
 	{
@@ -90,7 +102,7 @@ class Buttons
 private: // data
 
 	// structure of buttons handles and their handle functions 
-	vector<Button> buttons; 
+	vector<Button> buttons;
 
 	static string edit_control_text;
 

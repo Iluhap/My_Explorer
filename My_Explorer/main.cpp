@@ -20,6 +20,8 @@ LPCTSTR szTitle = "MyExplorer";
 
 FolderView* pFolderView;
 
+FolderTree* pFolderTree;
+
 Directory* directory;
 
 Buttons* pButtons;
@@ -46,7 +48,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	return msg.wParam;
+	return (int)msg.wParam;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
@@ -153,7 +155,7 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 
 	pButtons = new Buttons(hWnd, hInst);
 
-	// pFolderTreeWindow = new FolderTree();
+	pFolderTree = new FolderTree(hWnd, hInst);
 }
 
 void ReleaseComponents()
@@ -166,5 +168,5 @@ void ReleaseComponents()
 
 	delete pButtons;
 
-	// delete pFolderTree;
+	delete pFolderTree;
 }

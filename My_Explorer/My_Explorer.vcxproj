@@ -144,7 +144,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileSystem.cpp" />
-    <ClCompile Include="Interface.cpp" />
+    <ClCompile Include="FolderTree.cpp" />
+    <ClCompile Include="FolderView.cpp" />
+    <ClCompile Include="Buttons.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
