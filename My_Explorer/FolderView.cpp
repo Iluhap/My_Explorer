@@ -116,9 +116,8 @@ void FolderView::FillListViewTab()
 
 //----------------------------------------------// 
 
-FolderView::FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINSTANCE hInst) : FolderView()
+FolderView::FolderView(HWND hwndParent, HINSTANCE hInst, const RECT& cRect) : FolderView()
 {
-	this->currDir = dir;
 	this->hwndParent = hwndParent;
 	this->hInst = hInst;
 
@@ -129,10 +128,6 @@ FolderView::FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINST
 	CreateListView(hwndParent, hInst);
 
 	InitListViewColumns();
-
-	FillListViewTab();
-
-	InsertListViewItems();
 }
 
 void FolderView::setRect(const RECT& rect)
@@ -140,9 +135,9 @@ void FolderView::setRect(const RECT& rect)
 	this->area = rect;
 }
 
-void FolderView::setDir(Directory& directory)
+void FolderView::setDir(Directory* directory)
 {
-	*(this->currDir) = directory;
+	this->currDir = directory;
 
 	this->updateList();
 }

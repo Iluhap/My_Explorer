@@ -1,5 +1,3 @@
-#pragma once
-
 #include "FileSystem.h"
 
 #pragma comment(lib, "comctl32.lib")
@@ -8,6 +6,7 @@
 #include "resource.h"
 
 #include <map>
+#include <set>
 
 using namespace FileSystem;
 
@@ -44,12 +43,12 @@ private: // class private methods
 
 public: // class public methods
 
-	FolderView(Directory* dir, const RECT& cRect, HWND hwndParent, HINSTANCE hInst);
+	FolderView(HWND hwndParent, HINSTANCE hInst, const RECT& cRect);
 
 	void updateList();
 
 	void setRect(const RECT& cRect);
-	void setDir(Directory& directory);
+	void setDir(Directory* directory);
 
 	vector<string> getElement(unsigned index) const;
 	HWND getListHandle() const;
@@ -62,29 +61,36 @@ class FolderTree
 {
 private:
 
-	HWND hTreeView;
-	HWND hwndParent;
-	HINSTANCE hInst;
+	FolderView* pFolderView; // Pointer to FolderView object
+
+	HWND hTreeView; // Handle of TreeView window
+	HWND hwndParent; // Handle of parent window
+	HINSTANCE hInst; // Handle of application
 
 	RECT area; // TreeView area
 
-	vector<Directory> drives;
+	vector<Directory*> drives;
 
-	std::map<HTREEITEM, Directory> treeItems;
+	set<HTREEITEM> loaded;
+
+	std::map<HTREEITEM, Directory*> treeItems;
 
 private:
 	FolderTree();
 
 	void CreateTreeView(HWND hWnd, HINSTANCE hInst);
-	void AddItemToTree(LPTSTR lpszItem, int nLevel);
+	HTREEITEM AddItemToTree(LPTSTR lpszItem, int nLevel, HTREEITEM parentItem);
 	BOOL InitTreeViewItems();
 
 public:
 
-	FolderTree(HWND hWnd, HINSTANCE hInst);
+	FolderTree(HWND hWnd, HINSTANCE hInst, FolderView* pFV);
+
 	~FolderTree();
 
 	void setRect(const RECT&);
+
+	void setSelection(HTREEITEM hItem);
 
 };
 

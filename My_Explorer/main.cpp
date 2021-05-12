@@ -22,8 +22,6 @@ FolderView* pFolderView;
 
 FolderTree* pFolderTree;
 
-Directory* directory;
-
 Buttons* pButtons;
 
 //--- End of variables ---//
@@ -117,7 +115,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	case WM_PAINT: // Перемалювати вікно
-	{	hdc = BeginPaint(hWnd, &ps); // Почати графічний вивід
+	{
+		hdc = BeginPaint(hWnd, &ps); // Почати графічний вивід
 		GetClientRect(hWnd, &rt); // Область вікна для малювання
 
 		EndPaint(hWnd, &ps); // Закінчити графічний вивід
@@ -128,6 +127,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		pButtons->Handler(lParam, pFolderView);
 		break;
 	}
+	case WM_NOTIFY:
+	{
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case TVN_SELCHANGED:
+		{
+			// MessageBox(NULL, "Notify", "Notify", MB_OK);
+
+			// TODO implement changing of selected folder
+
+			LPNMTREEVIEW pnmtv;
+
+			pnmtv = (LPNMTREEVIEW)lParam;
+
+			pFolderTree->setSelection(pnmtv->itemNew.hItem);
+
+			break;
+		}
+		}
+		break;
+	}
+
 	case WM_DESTROY: // Завершення роботи
 	{
 		ReleaseComponents();
@@ -146,23 +167,19 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 {
 	// TODO 
 
-	directory = new Directory("C:\\Users\\Илья\\Desktop\\TEST", nullptr);
-
 	RECT rt;
 	GetClientRect(hWnd, &rt);
 
-	pFolderView = new FolderView(directory, rt, hWnd, hInst);
+	pFolderView = new FolderView(hWnd, hInst, rt);
 
 	pButtons = new Buttons(hWnd, hInst);
 
-	pFolderTree = new FolderTree(hWnd, hInst);
+	pFolderTree = new FolderTree(hWnd, hInst, pFolderView);
 }
 
 void ReleaseComponents()
 {
 	// TODO Release of memory
-
-	delete directory;
 
 	delete pFolderView;
 

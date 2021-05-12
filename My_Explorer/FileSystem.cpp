@@ -23,16 +23,25 @@ namespace FileSystem
 		string path = this->getPath();
 
 		WIN32_FIND_DATA data;
+
+		string tmp_str = "";
+
+		bool cond;
+
 		HANDLE hFind = FindFirstFile((path + "\\*").c_str(), &data);      // DIRECTORY
 
 		if (hFind != INVALID_HANDLE_VALUE) {
 			do
 			{
-				if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-					this->subDirectories.push_back(data.cFileName); // filling list of subDirectories
-				else
-					this->files.push_back(File(data)); // filling list of files
-
+				tmp_str = data.cFileName;
+				cond = !(tmp_str == ".." or tmp_str == ".");
+				if (cond) 
+				{
+					if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+						this->subDirectories.push_back(tmp_str); // filling list of subDirectories
+					else
+						this->files.push_back(File(data)); // filling list of files
+				}
 			} while (FindNextFile(hFind, &data));
 			FindClose(hFind);
 		}
@@ -43,7 +52,7 @@ namespace FileSystem
 	string Directory::getName() const { return this->name; }
 	vector<File> Directory::getFiles() const { return this->files; }
 	vector<string> Directory::getDirs() const { return this->subDirectories; }
-	File Directory::getFileInfo(string filename) const 
+	File Directory::getFileInfo(string filename) const
 	{
 		auto file = find_if(this->files.begin(), this->files.end(),
 			[filename](const File& elem)
@@ -143,22 +152,22 @@ namespace FileSystem
 			};
 		}
 
-		bool endWith(string str, string subStr) 
-			{
-				string::size_type idx;
+		bool endWith(string str, string subStr)
+		{
+			string::size_type idx;
 
-				string sub;
+			string sub;
 
-				idx = str.rfind('\\');
+			idx = str.rfind('\\');
 
-				if (idx != string::npos)
-					sub = str.substr(idx + 1);
-				
-				if (sub == subStr)
-					return true;
-				else
-					return false;
-			}
+			if (idx != string::npos)
+				sub = str.substr(idx + 1);
+
+			if (sub == subStr)
+				return true;
+			else
+				return false;
+		}
 
 		bool openFile(string fileName)
 		{

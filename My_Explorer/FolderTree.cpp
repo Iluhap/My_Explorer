@@ -27,7 +27,7 @@ void FolderTree::CreateTreeView(HWND hWnd, HINSTANCE hInst)
 		NULL);
 }
 
-void FolderTree::AddItemToTree(LPTSTR lpszItem, int nLevel)
+HTREEITEM FolderTree::AddItemToTree(LPTSTR lpszItem, int nLevel, HTREEITEM hParentItem)
 {
 	TVITEM tvi;
 	TVINSERTSTRUCT tvins;
@@ -42,11 +42,6 @@ void FolderTree::AddItemToTree(LPTSTR lpszItem, int nLevel)
 	tvi.pszText = lpszItem;
 	tvi.cchTextMax = sizeof(tvi.pszText) / sizeof(tvi.pszText[0]);
 
-	// Assume the item is not a parent item, so give it a 
-	// document image. 
-	// tvi.iImage = g_nDocument;
-	// tvi.iSelectedImage = g_nDocument;
-
 	// Save the heading level in the item's application-defined 
 	// data area. 
 	tvi.lParam = (LPARAM)nLevel;
@@ -57,54 +52,44 @@ void FolderTree::AddItemToTree(LPTSTR lpszItem, int nLevel)
 	if (nLevel == 1)
 		tvins.hParent = TVI_ROOT;
 	else if (nLevel == 2)
-		tvins.hParent = hPrevRootItem;
-	else
-		tvins.hParent = hPrevLev2Item;
+		tvins.hParent = hParentItem;
 
 	// Add the item to the tree-view control. 
-	hPrev = (HTREEITEM)SendMessage(this->hTreeView, TVM_INSERTITEM,
-		0, (LPARAM)(LPTVINSERTSTRUCT)&tvins);
+	hPrev = (HTREEITEM)SendMessage(
+		this->hTreeView,
+		TVM_INSERTITEM,
+		0,
+		(LPARAM)(LPTVINSERTSTRUCT)&tvins
+	);
 
 	if (hPrev == NULL)
-		return;
+		return nullptr;
 
-	// Save the handle to the item. 
-	if (nLevel == 1)
-		hPrevRootItem = hPrev;
-	else if (nLevel == 2)
-		hPrevLev2Item = hPrev;
-
-	// The new item is a child item. Give the parent item a 
-	// closed folder bitmap to indicate it now has child items. 
-	if (nLevel > 1)
-	{
-		hti = TreeView_GetParent(this->hTreeView, hPrev);
-		tvi.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-		tvi.hItem = hti;
-		// tvi.iImage = g_nClosed;
-		// tvi.iSelectedImage = g_nClosed;
-		TreeView_SetItem(this->hTreeView, &tvi);
-	}
+	return hPrev;
 }
 
 BOOL FolderTree::InitTreeViewItems()
 {
-	HTREEITEM hti;
+	HTREEITEM hti = nullptr;
 
-	// g_rgDocHeadings is an application-defined global array of 
-	// the following structures: 
-	//     typedef struct 
-	//       { 
-	//         TCHAR tchHeading[MAX_HEADING_LEN]; 
-	//         int tchLevel; 
-	//     } Heading; 
+	string name = "";
+
 	for (int i = 0; i < this->drives.size(); i++)
 	{
 		// Add the item to the tree-view control. 
-		AddItemToTree((LPSTR)this->drives[i].getName().c_str(), 1);
-		/*if (hti == NULL)
-			return FALSE;*/
+
+		name = this->drives[i]->getName();
+
+		hti = AddItemToTree((LPSTR)name.c_str(), 1, NULL);
+
+		this->treeItems.insert(
+			{
+				hti,
+				this->drives[i]
+			}
+		);
 	}
+
 	return TRUE;
 }
 
@@ -114,6 +99,7 @@ FolderTree::FolderTree()
 	:
 	hTreeView(nullptr),
 	hwndParent(nullptr),
+	pFolderView(nullptr),
 	hInst(NULL),
 	area({ 0,0,0,0 })
 {
@@ -121,14 +107,16 @@ FolderTree::FolderTree()
 
 	for (string drive_name : drives)
 	{
-		this->drives.push_back(Directory(drive_name, nullptr));
+		Directory* pDir = new Directory(drive_name, nullptr);
+		this->drives.push_back(pDir);
 	}
 }
 
-FolderTree::FolderTree(HWND hWnd, HINSTANCE hInst) : FolderTree()
+FolderTree::FolderTree(HWND hWnd, HINSTANCE hInst, FolderView* pFV) : FolderTree()
 {
 	this->hwndParent = hWnd;
 	this->hInst = hInst;
+	this->pFolderView = pFV;
 
 	GetClientRect(hWnd, &this->area);
 	Utilities::rectTransform(this->area, 1, 0.95, 0.25, 0.9);
@@ -136,15 +124,48 @@ FolderTree::FolderTree(HWND hWnd, HINSTANCE hInst) : FolderTree()
 	CreateTreeView(hWnd, hInst);
 
 	InitTreeViewItems();
+
+	this->pFolderView->setDir(this->drives[0]); // Setting a start FolderView window state
 }
 
 FolderTree::~FolderTree()
 {
+	for (auto& elem : treeItems)
+	{
+		delete elem.second;
+	}
 }
 
 void FolderTree::setRect(const RECT& cRect)
 {
 	Utilities::rectTransform(this->area, 0, 0, 0.25, 0);
+}
+
+void FolderTree::setSelection(HTREEITEM hItem)
+{
+	HTREEITEM hti = nullptr;
+
+	Directory* pDir = nullptr;
+
+	if (loaded.find(hItem) == loaded.end()) // Subitems of hItem is not loaded
+	{
+		pDir = this->treeItems[hItem];
+
+		for (const auto& name : pDir->getDirs())
+		{
+			hti = AddItemToTree((LPSTR)name.c_str(), 2, hItem);
+
+			this->treeItems.insert(
+				{ 
+					hti,
+					new Directory(name, pDir)
+				}
+			);
+		}
+
+		loaded.insert(hItem); // Tag treeView item as loaded
+	}
+	this->pFolderView->setDir(this->treeItems[hItem]); // Updating of FolderView state
 }
 
 //-----END OF FolderTree's METHODS-----//
