@@ -156,7 +156,7 @@ void FolderTree::setSelection(HTREEITEM hItem)
 			hti = AddItemToTree((LPSTR)name.c_str(), 2, hItem);
 
 			this->treeItems.insert(
-				{ 
+				{
 					hti,
 					new Directory(name, pDir)
 				}

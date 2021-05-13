@@ -10,7 +10,10 @@
 
 using namespace FileSystem;
 
-
+/*
+* Class that represents an interface used to interact with files and directories
+* Based on List-View control windows
+*/
 class FolderView
 {
 	friend class Buttons;
@@ -22,24 +25,26 @@ private: // class data
 
 	RECT area; // ListView area
 
-	HWND hwndParent;
-	HINSTANCE hInst;
+	HWND hwndParent; // Handle of parent window
+	HINSTANCE hInst; // Handle of application
 
 	vector<string> columns; // Columns of List-View
 
-	vector<vector<string>> listViewTab;
+	vector<vector<string>> listViewTab; // Items structure
 
+	// Set of pointer to used directories
 	set<Directory*> trashDirs;
 
 private: // class private methods
 
 	FolderView();
 
+	// Creates a List-View control window
 	void CreateListView(HWND hwndParent, HINSTANCE hInst);
 
-	bool InsertListViewItems();
-
 	bool InitListViewColumns();
+
+	bool InsertListViewItems();
 
 	void FillListViewTab();
 
@@ -56,14 +61,20 @@ public: // class public methods
 	HWND getListHandle() const;
 	Directory* getDir() const;
 
-
+	// Method used for opening files and directories in List-View control
 	void openItem(int itemID);
 
+	// Updated state of List-View window
 	void updateList();
 
 };
 
 
+/*
+* This class contains data structures and methods
+* based on Tree-View control window
+* And used to represent tree based file sytem of current system
+*/
 class FolderTree
 {
 private:
@@ -76,12 +87,12 @@ private:
 
 	RECT area; // TreeView area
 
-	vector<Directory*> drives;
+	vector<Directory*> drives; // List of logical drives of current system
 
-	set<HTREEITEM> loaded;
+	set<HTREEITEM> loaded; // Contains handles of loaded items of tree
 
+	// Map of Directories and respective handles of Tree
 	std::map<HTREEITEM, Directory*> treeItems;
-
 private:
 	FolderTree();
 
@@ -98,10 +109,12 @@ public:
 	void setRect(const RECT&);
 
 	void setSelection(HTREEITEM hItem);
-
 };
 
-
+/*
+* Class agregator of buttons
+* Contains implementation of buttons logic
+*/
 class Buttons
 {
 	typedef void (*buttonHandler)(FolderView*); // pointer to methods of Buttons class
@@ -112,13 +125,10 @@ class Buttons
 		buttonHandler pFunction;
 	};
 
-private: // data
+private: // Data
 
 	// structure of buttons handles and their handle functions 
 	vector<Button> buttons;
-
-	static FolderTree* pFTree;
-	static FolderView* pFView;
 
 	static string edit_control_text;
 

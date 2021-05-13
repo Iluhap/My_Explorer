@@ -3,6 +3,8 @@
 
 //-----FolderView's METHODS-----//
 
+// Private methods
+
 FolderView::FolderView() :
 	currDir(nullptr),
 	hListBox(nullptr),
@@ -114,7 +116,10 @@ void FolderView::FillListViewTab()
 	}
 }
 
-//----------------------------------------------// 
+// End of private methods
+
+
+// Public methods
 
 FolderView::FolderView(HWND hwndParent, HINSTANCE hInst, const RECT& cRect) : FolderView()
 {

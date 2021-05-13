@@ -175,8 +175,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void InitComponents(HWND hWnd, HINSTANCE hInst)
 {
-	// TODO 
-
 	RECT rt;
 	GetClientRect(hWnd, &rt);
 
@@ -189,8 +187,6 @@ void InitComponents(HWND hWnd, HINSTANCE hInst)
 
 void ReleaseComponents()
 {
-	// TODO Release of memory
-
 	delete pButtons;
 
 	delete pFolderTree;

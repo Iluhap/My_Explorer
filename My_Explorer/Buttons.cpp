@@ -41,8 +41,8 @@ LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 {
-	vector<string> names = {"Open", "Copy", "Move", "Delete"}; // Names of buttons
-	vector<buttonHandler> functions = { OpenHandler , CopyHandler, MoveHandler, DeleteHandler}; // Handlers functions for buttons
+	vector<string> names = { "Open", "Copy", "Move", "Delete" }; // Names of buttons
+	vector<buttonHandler> functions = { OpenHandler , CopyHandler, MoveHandler, DeleteHandler }; // Handlers functions for buttons
 
 	RECT rt;
 	GetClientRect(hParent, &rt);
@@ -55,9 +55,9 @@ Buttons::Buttons(HWND hParent, HINSTANCE hInst)
 		HWND hButton = CreateWindow("button", names[i].c_str(),
 			WS_CHILD | WS_VISIBLE | WS_BORDER,
 			left, rt.top + 10,
-			70,25,
+			70, 25,
 			hParent, (HMENU)NULL, hInst, NULL);
-		this->buttons.push_back({ hButton, functions[i]});
+		this->buttons.push_back({ hButton, functions[i] });
 	}
 }
 
@@ -100,7 +100,7 @@ void Buttons::CopyHandler(FolderView* pFolderView)
 		if (type == "Folder")
 			Utilities::copyDirectory(pFolderView->getDir(), Buttons::edit_control_text);
 		else
-			Utilities::copyFile(pFolderView->getDir()->getPath() + "\\" + name, Buttons::edit_control_text); 
+			Utilities::copyFile(pFolderView->getDir()->getPath() + "\\" + name, Buttons::edit_control_text);
 
 		Buttons::edit_control_text = "";
 		pFolderView->updateList();

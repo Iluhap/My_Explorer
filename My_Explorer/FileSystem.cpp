@@ -35,7 +35,7 @@ namespace FileSystem
 			{
 				tmp_str = data.cFileName;
 				cond = !(tmp_str == ".." or tmp_str == ".");
-				if (cond) 
+				if (cond)
 				{
 					if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 						this->subDirectories.push_back(tmp_str); // filling list of subDirectories

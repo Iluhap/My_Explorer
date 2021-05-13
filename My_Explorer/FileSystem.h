@@ -8,7 +8,7 @@ using namespace std;
 namespace FileSystem
 {
 	/*
-	*	Class used for getting info about files in directories 
+	*	Class used for getting info about files in directories
 	*/
 	class File
 	{
@@ -27,9 +27,9 @@ namespace FileSystem
 		File(const WIN32_FIND_DATA& data);
 	};
 
-	
+
 	/*
-	*	Class used for interaction with directories 
+	*	Class used for interaction with directories
 	*/
 	class Directory
 	{
@@ -75,6 +75,7 @@ namespace FileSystem
 		// Returns a vector of names of logical drives on current machine
 		vector<string> listDrives();
 
+
 		void rectTransform(
 			RECT& cRect,
 			double left_scale,
@@ -84,11 +85,11 @@ namespace FileSystem
 		);
 
 		bool endWith(string str, string subStr);
-		
+
 		//--- Methods below returns non-zero value if falure acquired ---//
 
 		bool openFile(string fileName);
-		
+
 		bool copyFile(string existingFileName, string newFileName);
 
 		bool deleteFile(string fileName);
@@ -96,10 +97,10 @@ namespace FileSystem
 		bool changeFileName(string fileName, string newFileName);
 
 		// Recursive deleting of directory
-		bool deleteDirectory(Directory* pDir); 
-		
+		bool deleteDirectory(Directory* pDir);
+
 		// Recursive copying of directory
-		bool copyDirectory(Directory* pDir, string newPath); 
+		bool copyDirectory(Directory* pDir, string newPath);
 
 		// Uses copy and delete methods for replacing directory
 		bool moveDirectory(Directory* pDir, string newPath);
