@@ -20,6 +20,8 @@ private: // class data
 
 	HWND hListBox; // Handle of List-View Window
 
+	RECT area; // ListView area
+
 	HWND hwndParent;
 	HINSTANCE hInst;
 
@@ -27,7 +29,7 @@ private: // class data
 
 	vector<vector<string>> listViewTab;
 
-	RECT area; // ListView area
+	set<Directory*> trashDirs;
 
 private: // class private methods
 
@@ -45,7 +47,7 @@ public: // class public methods
 
 	FolderView(HWND hwndParent, HINSTANCE hInst, const RECT& cRect);
 
-	void updateList();
+	~FolderView();
 
 	void setRect(const RECT& cRect);
 	void setDir(Directory* directory);
@@ -53,6 +55,11 @@ public: // class public methods
 	vector<string> getElement(unsigned index) const;
 	HWND getListHandle() const;
 	Directory* getDir() const;
+
+
+	void openItem(int itemID);
+
+	void updateList();
 
 };
 
@@ -109,6 +116,9 @@ private: // data
 
 	// structure of buttons handles and their handle functions 
 	vector<Button> buttons;
+
+	static FolderTree* pFTree;
+	static FolderView* pFView;
 
 	static string edit_control_text;
 

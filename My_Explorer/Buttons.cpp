@@ -78,24 +78,7 @@ void Buttons::OpenHandler(FolderView* pFolderView)
 
 	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
-	if (id < 0 or id >= pFolderView->listViewTab.size())
-		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
-	else
-	{
-		vector<string> elem = pFolderView->getElement(id);
-
-		string name = elem[0];
-		string type = elem[1];
-
-		if (type == "Folder")
-		{
-			/*
-			* TODO implement opening of directory
-			*/
-		}
-		else
-			Utilities::openFile(pFolderView->getDir()->getPath() + "\\" + name); // Opening of file
-	}
+	pFolderView->openItem(id);
 }
 void Buttons::CopyHandler(FolderView* pFolderView)
 {

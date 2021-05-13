@@ -145,6 +145,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			break;
 		}
+
+		case NM_DBLCLK:
+		{
+			LPNMITEMACTIVATE item = (LPNMITEMACTIVATE)lParam;
+
+			if (item->hdr.hwndFrom == pFolderView->getListHandle()) // Double click for FolderView
+				pFolderView->openItem(item->iItem);
+
+			break;
+		}
 		}
 		break;
 	}
@@ -181,9 +191,9 @@ void ReleaseComponents()
 {
 	// TODO Release of memory
 
-	delete pFolderView;
-
 	delete pButtons;
 
 	delete pFolderTree;
+
+	delete pFolderView;
 }

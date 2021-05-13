@@ -130,6 +130,17 @@ FolderView::FolderView(HWND hwndParent, HINSTANCE hInst, const RECT& cRect) : Fo
 	InitListViewColumns();
 }
 
+FolderView::~FolderView()
+{
+	for (auto& pDir : this->trashDirs)
+	{
+		if (pDir != nullptr)
+		{
+			delete pDir;
+		}
+	}
+}
+
 void FolderView::setRect(const RECT& rect)
 {
 	this->area = rect;
@@ -147,6 +158,32 @@ vector<string> FolderView::getElement(unsigned index) const { return this->listV
 HWND FolderView::getListHandle() const { return this->hListBox; }
 
 Directory* FolderView::getDir() const { return this->currDir; }
+
+void FolderView::openItem(int itemID)
+{
+	if (itemID < 0 or itemID >= this->listViewTab.size())
+		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+	else
+	{
+		vector<string> elem = this->getElement(itemID);
+
+		string name = elem[0];
+		string type = elem[1];
+
+		Directory* pDir = nullptr;
+
+		if (type == "Folder")
+		{
+			pDir = new Directory(name, this->getDir());
+
+			this->setDir(pDir);
+
+			this->trashDirs.insert(pDir);
+		}
+		else
+			Utilities::openFile(this->getDir()->getPath() + "\\" + name); // Opening of file
+	}
+}
 
 // Updating the list of files and directories
 void FolderView::updateList()
