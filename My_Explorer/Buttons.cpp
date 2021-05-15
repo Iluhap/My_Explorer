@@ -24,8 +24,6 @@ LRESULT Buttons::DlgFunc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 			Buttons::edit_control_text = s_text;
 
-			MessageBox(hDlg, s_text, "Output", MB_OK);
-
 			EndDialog(hDlg, LOWORD(wParam));
 
 			return TRUE;
