@@ -85,7 +85,7 @@ void Buttons::CopyHandler(FolderView* pFolderView)
 	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
-		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+		MessageBox(NULL, "You should choose element", "Error", MB_ICONWARNING);
 	else
 	{
 		vector<string> elem = pFolderView->getElement(id);
@@ -111,7 +111,7 @@ void Buttons::MoveHandler(FolderView* pFolderView)
 	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
-		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+		MessageBox(NULL, "You should choose element", "Error", MB_ICONWARNING);
 	else
 	{
 		vector<string> elem = pFolderView->getElement(id);
@@ -137,7 +137,7 @@ void Buttons::DeleteHandler(FolderView* pFolderView)
 	unsigned id = (unsigned)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
 
 	if (id < 0 or id >= pFolderView->listViewTab.size())
-		MessageBox(NULL, "You should choose element", "Open ERROR", MB_ICONWARNING);
+		MessageBox(NULL, "You should choose element", "Error", MB_ICONWARNING);
 	else
 	{
 		vector<string> elem = pFolderView->getElement(id);

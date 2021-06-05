@@ -10,7 +10,7 @@ FolderView::FolderView() :
 	hListBox(nullptr),
 	hwndParent(nullptr),
 	hInst(NULL),
-	columns({ "Name", "Type", "Date" , "Size" }),
+	columns({ "Name", "Type", "Date" , "Size"}),
 	area({ 0,0,0,0 }) {}
 
 void FolderView::CreateListView(HWND hwndParent, HINSTANCE hInst)
